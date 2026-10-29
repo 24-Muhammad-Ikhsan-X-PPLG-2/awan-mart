@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -23,6 +24,7 @@ enum PaymentStatus: string
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
+#[Fillable(['order_id', 'method', 'status'])]
 class Payment extends Model
 {
     protected $table = 'payments';
@@ -36,6 +38,6 @@ class Payment extends Model
 
     public function order(): BelongsTo
     {
-        return $this->belongsTo(Order::class, 'order_id', 'id');
+        return $this->belongsTo(Order::class);
     }
 }
