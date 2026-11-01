@@ -33,7 +33,7 @@ const InputComponent = ({
                         : "border-gray-400 focus-within:border-[#203452]"
                 }`}
             >
-                <div className="flex items-center gap-2 w-full">
+                <div className="flex items-center gap-1 w-full">
                     {Icon && (
                         <span
                             className={`transition-colors pl-3 ${

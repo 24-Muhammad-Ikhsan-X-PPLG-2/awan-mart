@@ -6,7 +6,10 @@ use App\Models\Pelanggan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -24,7 +27,16 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'min:8'
         ]);
+        $key = Str::lower($dataForm['email']) . '|' . $req->ip();
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            $seconds = RateLimiter::availableIn($key);
+            throw ValidationException::withMessages([
+                'email' => "Terlalu banyak percobaan login. Coba lagi dalam {$seconds} detik.",
+                'password' => "Terlalu banyak percobaan login. Coba lagi dalam {$seconds} detik.",
+            ]);
+        }
         if (!Auth::attempt($dataForm, true)) {
+            RateLimiter::hit($key, 60);
             return redirect()->to('/auth/login')->withErrors([
                 'email' => 'Email atau password salah',
                 'password' => 'Email atau password salah'
