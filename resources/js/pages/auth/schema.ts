@@ -9,7 +9,7 @@ export const formRegisterSchema = z
         email: z.email().nonempty("Email tidak boleh kosong!"),
         name: z.string().min(4, "Nama minimal 4 karakter!"),
         password: z.string().min(8, "Password minimal 8 karakter!"),
-        confirmPassword: z.string(),
+        confirmPassword: z.string().nonempty("Konfirmasi password anda!"),
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: "Konfirmasi password tidak cocok!",
