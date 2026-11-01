@@ -78,7 +78,7 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda" }) => {
                                             duration: 0.22,
                                             ease: [0.22, 1, 0.36, 1],
                                         }}
-                                        className="absolute left-1/2 top-full z-50 w-[520px] -translate-x-1/2 rounded-xl border border-[#E8EBF0] bg-white p-5 shadow-[0_16px_50px_rgba(32,52,82,0.12)]"
+                                        className="absolute left-1/2 top-full z-50 w-130 -translate-x-1/2 rounded-xl border border-[#E8EBF0] bg-white p-5 shadow-[0_16px_50px_rgba(32,52,82,0.12)]"
                                     >
                                         <div className="mb-4 flex items-center justify-between">
                                             <div>
