@@ -25,7 +25,7 @@ class AuthController extends Controller
     {
         $dataForm = $req->validate([
             'email' => 'required|email',
-            'password' => 'min:8'
+            'password' => 'required'
         ]);
         $key = Str::lower($dataForm['email']) . '|' . $req->ip();
         if (RateLimiter::tooManyAttempts($key, 5)) {

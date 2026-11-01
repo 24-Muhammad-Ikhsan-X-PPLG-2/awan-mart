@@ -31,3 +31,5 @@ export const categories = [
     { name: "Gaming", href: "/categories/gaming", Icon: Gamepad2 },
     { name: "Aksesori", href: "/categories/accessories", Icon: Cable },
 ];
+
+export const appName = import.meta.env.VITE_APP_NAME;

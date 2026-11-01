@@ -24,6 +24,7 @@ const Register = () => {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const toggleShowPassword = () => setShowPassword((prev) => !prev);
     const toggleShowPasswordConfirm = () =>
         setShowPasswordConfirm((prev) => !prev);
@@ -39,6 +40,7 @@ const Register = () => {
             {
                 preserveScroll: true,
                 preserveState: true,
+                onBefore: () => setIsLoading(true),
                 onError: (e) => {
                     Object.entries(e).forEach(([field, message]) => {
                         setError(field as keyof FormRegisterSchemaType, {
@@ -46,15 +48,14 @@ const Register = () => {
                         });
                     });
                 },
+                onFinish: () => setIsLoading(false),
             },
         );
     };
 
     return (
         <main className="min-h-dvh flex flex-col lg:flex-row">
-            {/* Branding */}
             <section className="relative overflow-hidden bg-[#203452] text-white px-6 py-8 sm:px-10 sm:py-10 lg:w-[40%] lg:min-h-dvh lg:px-12 lg:py-12 lg:flex lg:flex-col lg:justify-between hidden md:block">
-                {/* Decorative circles */}
                 <div className="pointer-events-none absolute size-64 rounded-full border-2 border-gray-400/30 -top-36 -right-32 lg:size-80" />
                 <div className="pointer-events-none absolute size-64 rounded-full border-2 border-gray-400/30 -bottom-36 -left-32 lg:size-80" />
 
@@ -85,7 +86,6 @@ const Register = () => {
                 </p>
             </section>
 
-            {/* Login form */}
             <section className="flex-1 min-h-[65dvh] flex items-center justify-center px-6 py-12 sm:px-10 lg:min-h-dvh lg:px-12 xl:px-20">
                 <div className="w-full max-w-md xl:max-w-lg text-[#203452]">
                     <p className="text-xs sm:text-sm tracking-[0.2em] font-medium">
@@ -108,6 +108,7 @@ const Register = () => {
                         <InputComponent
                             label="Nama Lengkap"
                             type="text"
+                            disabled={isLoading}
                             placeholder="Masukkan nama lengkap Anda"
                             Icon={<User size={20} />}
                             error={errors.name?.message}
@@ -118,6 +119,7 @@ const Register = () => {
                         <InputComponent
                             label="Email"
                             type="email"
+                            disabled={isLoading}
                             placeholder="Masukkan email Anda"
                             Icon={<Mail size={20} />}
                             error={errors.email?.message}
@@ -128,6 +130,7 @@ const Register = () => {
 
                         <InputComponent
                             label="Password"
+                            disabled={isLoading}
                             type={showPassword ? "text" : "password"}
                             placeholder="Masukkan password Anda"
                             Icon={<Lock size={20} />}
@@ -150,6 +153,7 @@ const Register = () => {
                         />
                         <InputComponent
                             label="Konfirmasi Password"
+                            disabled={isLoading}
                             type={showPasswordConfirm ? "text" : "password"}
                             placeholder="Konfirmasi password Anda"
                             Icon={<Lock size={20} />}
@@ -173,10 +177,17 @@ const Register = () => {
 
                         <button
                             type="submit"
-                            className="flex items-center gap-2 w-full justify-center py-3.5 text-white bg-[#203452] hover:bg-[#2c4568] active:scale-[0.99] transition-all font-semibold rounded-lg cursor-pointer"
+                            disabled={isLoading}
+                            className="flex items-center gap-2 w-full justify-center py-3.5 text-white bg-[#203452] hover:bg-[#2c4568] active:scale-[0.99] transition-all font-semibold rounded-lg cursor-pointer disabled:bg-[#2f425e]"
                         >
-                            Daftar Akun
-                            <MoveRight size={20} />
+                            {isLoading ? (
+                                <div className="loader w-6"></div>
+                            ) : (
+                                <>
+                                    Daftar Akun
+                                    <MoveRight size={20} />
+                                </>
+                            )}
                         </button>
                     </form>
 

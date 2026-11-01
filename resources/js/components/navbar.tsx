@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { FC, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { categories } from "@/constant";
+import { appName, categories } from "@/constant";
 import RenderNavLink from "./RenderNavLink";
 import MobileNav from "./MobileNav";
 import SearchInput from "./SearchInput";
@@ -31,7 +31,7 @@ const Navbar: FC<Props> = ({ activePage }) => {
                 <nav className="mx-auto flex h-19 max-w-360 items-center justify-between gap-8 px-6 lg:px-10 xl:px-14">
                     <a href="/" className="shrink-0">
                         <h1 className="font-playfair text-[27px] font-bold tracking-tight text-[#203452]">
-                            AwanMart
+                            {appName}
                         </h1>
                     </a>
                     <div className="hidden lg:block">
