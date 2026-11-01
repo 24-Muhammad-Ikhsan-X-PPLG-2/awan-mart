@@ -77,7 +77,7 @@ class AuthController extends Controller
         ]);
         // baru buat data pelanggan
         Pelanggan::query()->create([
-            'id_user' => $user->id,
+            'user_id' => $user->id,
             'name' => $dataForm['name'],
         ]);
         Auth::login($user, true);

@@ -30,10 +30,12 @@ const Register = () => {
     const login: SubmitHandler<FormRegisterSchemaType> = ({
         email,
         password,
+        confirmPassword,
+        name,
     }) => {
         router.post(
-            "/auth/login",
-            { email, password },
+            "/auth/register",
+            { email, password, name, confirmPassword },
             {
                 preserveScroll: true,
                 preserveState: true,
