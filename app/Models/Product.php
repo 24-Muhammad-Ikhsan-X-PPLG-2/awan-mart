@@ -9,6 +9,7 @@ use Illuminate\Support\Carbon;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Override;
+use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -23,7 +24,7 @@ use Override;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['user_id', 'image', 'slug', 'name', 'description', 'price', 'stock', 'category_id'])]
+#[Fillable(['user_id', 'image', 'name', 'description', 'price', 'stock', 'category_id'])]
 class Product extends Model
 {
     protected $table = 'products';
@@ -33,6 +34,15 @@ class Product extends Model
         return [
             'price' => 'decimal:2'
         ];
+    }
+    #[Override]
+    protected static function booted()
+    {
+        static::saving(function (Product $product) {
+            if ($product->isDirty('title')) {
+                $product->slug = Str::slug($product->title);
+            }
+        });
     }
     public function user(): BelongsTo
     {
