@@ -1,12 +1,20 @@
 import Navbar from "@/components/navbar";
+import CategoriesSection from "@/features/Home/components/CategoriesSection";
+import CTASection from "@/features/Home/components/CTASection";
+import Footer from "@/features/Home/components/Footer";
 import HeroSection from "@/features/Home/components/HeroSection";
+import ProductSection from "@/features/Home/components/ProductSection";
 
 const Home = () => {
     return (
-        <div className="h-[1000px]">
+        <main className="">
             <Navbar />
             <HeroSection />
-        </div>
+            <CategoriesSection />
+            <ProductSection />
+            <CTASection />
+            <Footer />
+        </main>
     );
 };
 

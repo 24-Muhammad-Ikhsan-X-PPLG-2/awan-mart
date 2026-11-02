@@ -3,7 +3,10 @@ import { ArrowRight } from "lucide-react";
 
 const HeroSection = () => {
     return (
-        <section className="relative isolate overflow-hidden bg-[#F8F9FC] text-[#203452]">
+        <section
+            id="hero"
+            className="relative isolate overflow-hidden bg-[#F8F9FC] text-[#203452]"
+        >
             {/* Dekorasi biar ga kosong amat */}
             <div className="pointer-events-none absolute inset-0 -z-10">
                 <div className="absolute -left-40 top-10 h-96 w-96 rounded-full bg-[#203452]/[0.035] blur-3xl" />
