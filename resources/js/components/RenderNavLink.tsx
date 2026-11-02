@@ -1,4 +1,5 @@
 import { navlinks, categories } from "@/constant";
+import { Link } from "@inertiajs/react";
 import { ChevronDown, ArrowRight } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { FC, useState } from "react";
@@ -91,19 +92,19 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda" }) => {
                                                 </p>
                                             </div>
 
-                                            <a
+                                            <Link
                                                 href={item.href}
                                                 className="flex items-center gap-1 text-xs font-semibold text-[#203452] hover:underline"
                                             >
                                                 Semua Kategori
                                                 <ArrowRight size={14} />
-                                            </a>
+                                            </Link>
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-2">
                                             {categories.map(
                                                 ({ name, href, Icon }) => (
-                                                    <a
+                                                    <Link
                                                         key={name}
                                                         href={href}
                                                         className="group flex items-center gap-3 rounded-lg border border-transparent p-3 transition-all duration-200 hover:border-[#E8EBF0] hover:bg-[#F8F9FB]"
@@ -125,7 +126,7 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda" }) => {
                                                                 Lihat produk
                                                             </p>
                                                         </div>
-                                                    </a>
+                                                    </Link>
                                                 ),
                                             )}
                                         </div>
@@ -137,7 +138,7 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda" }) => {
                 }
 
                 return (
-                    <a
+                    <Link
                         key={item.display}
                         href={item.href}
                         className={`group relative flex h-full items-center text-[13px] tracking-wide transition-colors duration-200 ${
@@ -155,7 +156,7 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda" }) => {
                                     : "scale-x-0 group-hover:scale-x-100"
                             }`}
                         />
-                    </a>
+                    </Link>
                 );
             })}
         </div>

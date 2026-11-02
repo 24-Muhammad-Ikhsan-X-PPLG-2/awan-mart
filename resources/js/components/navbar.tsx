@@ -29,11 +29,11 @@ const Navbar: FC<Props> = ({ activePage }) => {
         <>
             <header className="sticky top-0 z-50 w-full border-b border-[#E8EBF0] bg-white/95 backdrop-blur-md">
                 <nav className="mx-auto flex h-19 max-w-360 items-center justify-between gap-8 px-6 lg:px-10 xl:px-14">
-                    <a href="/" className="shrink-0">
+                    <Link href="/" className="shrink-0">
                         <h1 className="font-playfair text-[27px] font-bold tracking-tight text-[#203452]">
                             {appName}
                         </h1>
-                    </a>
+                    </Link>
                     <div className="hidden lg:block">
                         <RenderNavLink activePage={activePage} />
                     </div>
@@ -81,16 +81,18 @@ const Navbar: FC<Props> = ({ activePage }) => {
                     </div>
                     {/* Mobile */}
                     <div className="flex items-center gap-2 lg:hidden">
-                        <Link
-                            href="/cart"
-                            aria-label="Keranjang belanja"
-                            className="relative flex size-10 items-center justify-center rounded-full text-[#203452] hover:bg-[#F1F3F7]"
-                        >
-                            <ShoppingCart size={21} strokeWidth={1.7} />
-                            <span className="absolute right-0.5 top-0.5 flex size-4 items-center justify-center rounded-full bg-[#203452] text-[9px] font-semibold text-white">
-                                0
-                            </span>
-                        </Link>
+                        {user && (
+                            <Link
+                                href="/cart"
+                                aria-label="Keranjang belanja"
+                                className="relative flex size-10 items-center justify-center rounded-full text-[#203452] hover:bg-[#F1F3F7]"
+                            >
+                                <ShoppingCart size={21} strokeWidth={1.7} />
+                                <span className="absolute right-0.5 top-0.5 flex size-4 items-center justify-center rounded-full bg-[#203452] text-[9px] font-semibold text-white">
+                                    0
+                                </span>
+                            </Link>
+                        )}
 
                         <button
                             type="button"

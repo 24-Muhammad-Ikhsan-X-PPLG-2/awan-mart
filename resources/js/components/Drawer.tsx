@@ -43,11 +43,14 @@ const Drawer: FC<Props> = ({ isDrawerOpen, setIsDrawerOpen, activePage }) => {
                         className="fixed right-0 top-0 z-50 flex h-dvh w-full max-w-100 flex-col overflow-y-auto bg-white shadow-2xl lg:hidden"
                     >
                         <div className="flex h-19 shrink-0 items-center justify-between border-b border-[#E8EBF0] px-6">
-                            <a href="/" onClick={() => setIsDrawerOpen(false)}>
+                            <Link
+                                href="/"
+                                onClick={() => setIsDrawerOpen(false)}
+                            >
                                 <h2 className="font-playfair text-2xl font-bold tracking-tight text-[#203452]">
                                     AwanMart
                                 </h2>
-                            </a>
+                            </Link>
 
                             <button
                                 type="button"
@@ -79,7 +82,7 @@ const Drawer: FC<Props> = ({ isDrawerOpen, setIsDrawerOpen, activePage }) => {
 
                                 <div className="grid grid-cols-2 gap-2">
                                     {categories.map(({ name, href, Icon }) => (
-                                        <a
+                                        <Link
                                             key={name}
                                             href={href}
                                             onClick={() =>
@@ -95,7 +98,7 @@ const Drawer: FC<Props> = ({ isDrawerOpen, setIsDrawerOpen, activePage }) => {
                                             <span className="text-[11px] font-medium text-[#475467] transition-colors group-hover:text-[#203452]">
                                                 {name}
                                             </span>
-                                        </a>
+                                        </Link>
                                     ))}
                                 </div>
                             </div>
