@@ -13,6 +13,7 @@ use Override;
 /**
  * @property int $id
  * @property int $user_id
+ * @property string $image
  * @property string $name
  * @property string $description
  * @property string $price
@@ -21,7 +22,7 @@ use Override;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['user_id', 'name', 'description', 'price', 'stock', 'category_id'])]
+#[Fillable(['user_id', 'image', 'name', 'description', 'price', 'stock', 'category_id'])]
 class Product extends Model
 {
     protected $table = 'products';
