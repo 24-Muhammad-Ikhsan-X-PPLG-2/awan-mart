@@ -80,9 +80,7 @@ class AuthController extends Controller
             'user_id' => $user->id,
             'name' => $dataForm['name'],
         ]);
-        Auth::login($user, true);
-        $req->session()->regenerate();
-        return redirect()->intended('/');
+        return redirect()->to('/auth/login')->with('success', 'Sukses daftar, silahkan login.');
     }
     public function logout(Request $req)
     {

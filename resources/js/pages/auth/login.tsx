@@ -1,8 +1,8 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { formLoginSchema, FormLoginSchemaType } from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, router } from "@inertiajs/react";
-import { Eye, EyeOff, Lock, Mail, MoveRight } from "lucide-react";
+import { Link, router, usePage } from "@inertiajs/react";
+import { CheckCircle2, Eye, EyeOff, Lock, Mail, MoveRight } from "lucide-react";
 import InputComponent from "@/components/InputComponent";
 import { useState } from "react";
 
@@ -22,6 +22,7 @@ const Login = () => {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const { flash } = usePage().props;
     const toggleShowPassword = () => setShowPassword((prev) => !prev);
     const login: SubmitHandler<FormLoginSchemaType> = ({ email, password }) => {
         router.post(
@@ -90,6 +91,20 @@ const Login = () => {
                         Silakan login untuk melanjutkan menggunakan aplikasi
                         AwanMart.
                     </p>
+
+                    {flash.success && (
+                        <div
+                            role="status"
+                            className="mt-6 flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
+                        >
+                            <CheckCircle2
+                                size={20}
+                                className="mt-0.5 shrink-0"
+                            />
+
+                            <p>{flash.success}</p>
+                        </div>
+                    )}
 
                     <form
                         onSubmit={handleSubmit(login)}
