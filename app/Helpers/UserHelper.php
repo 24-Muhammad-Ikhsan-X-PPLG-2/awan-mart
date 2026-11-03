@@ -34,21 +34,21 @@ if (!function_exists('getInformationUser')) {
 }
 
 if (!function_exists('getInformationUserRequest')) {
-    function getInformationUserRequest(User $user)
+    function getInformationUserRequest(User|null $user)
     {
         if (!$user) {
             return null;
         }
         $information = [
             'email' => $user->email,
-            'role' => $user->role,
+            'role' => $user->role->value,
         ];
-        if ($user->role === "admin") {
+        if ($user->role->value === "admin") {
             $information['name'] = $user->admin->name;
             $information['alamat'] = $user->admin->alamat;
             $information['telp'] = $user->admin->telp;
             return $information;
-        } else if ($user->role === "supplier") {
+        } else if ($user->role->value === "supplier") {
             $information['name'] = $user->supplier->name;
             $information['alamat'] = $user->supplier->alamat;
             $information['telp'] = $user->supplier->telp;
