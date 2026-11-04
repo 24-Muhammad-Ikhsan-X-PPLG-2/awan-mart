@@ -19,7 +19,14 @@ Route::prefix('auth')->group(function () {
 });
 Route::middleware(['auth'])->group(function () {
     // Keranjang
-    Route::get('/cart', [CartController::class, 'cart_view']);
+    Route::prefix('cart')->group(function () {
+        Route::get('/', [CartController::class, 'cart_view']);
+        Route::get('/count', [CartController::class, 'cart_count']);
+        Route::post('/item', [CartController::class, 'cart_add']);
+        Route::patch('/item/{cartItem}', [CartController::class, 'cart_update']);
+        Route::post('/items/bulk', [CartController::class, 'cart_add_bulk']);
+        Route::delete('/items', [CartController::class, 'cart_delete']);
+    });
 });
 // Detail Product
 Route::get('/products/{product:slug}', [HomeController::class, 'product']);

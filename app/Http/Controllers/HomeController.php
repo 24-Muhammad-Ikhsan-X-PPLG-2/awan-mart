@@ -10,15 +10,22 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return Inertia::render('home');
+        $products = Product::all()->load([
+            'category',
+            'product_images'
+        ]);
+        return Inertia::render('home', [
+            'products' => $products
+        ]);
     }
     public function product(Product $product)
     {
+        $product->load([
+            'category',
+            'product_images'
+        ]);
         return Inertia::render('product_detail', [
-            'product' => $product->with([
-                'category',
-                'product_images'
-            ])->first()
+            'product' => $product
         ]);
     }
 }

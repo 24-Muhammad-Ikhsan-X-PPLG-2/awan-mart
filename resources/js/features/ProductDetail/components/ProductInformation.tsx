@@ -56,7 +56,11 @@ const ProductInformation: FC<Props> = ({ product }) => {
             />
 
             {/* Actions */}
-            <Actions product={product} quantity={quantity} />
+            <Actions
+                setQuantity={setQuantity}
+                product={product}
+                quantity={quantity}
+            />
 
             {/* Additional Information */}
             <AdditionalInformation />

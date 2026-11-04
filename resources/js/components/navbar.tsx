@@ -6,7 +6,7 @@ import {
     Menu,
     ArrowRight,
 } from "lucide-react";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { appName, categories } from "@/constant";
 import RenderNavLink from "./RenderNavLink";
@@ -14,6 +14,7 @@ import MobileNav from "./MobileNav";
 import SearchInput from "./SearchInput";
 import { Link, usePage } from "@inertiajs/react";
 import Drawer from "./Drawer";
+import { useCartStore } from "@/stores/cart-store";
 
 type Props = {
     activePage?: string;
@@ -21,9 +22,23 @@ type Props = {
 
 const Navbar: FC<Props> = ({ activePage }) => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const { cartCount, setCartCount } = useCartStore();
     const {
         auth: { user },
     } = usePage().props;
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            const res = await fetch("/cart/count");
+            const data = await res.json();
+            if (mounted) {
+                setCartCount(data);
+            }
+        })();
+        return () => {
+            mounted = false;
+        };
+    }, []);
 
     return (
         <>
@@ -42,16 +57,21 @@ const Navbar: FC<Props> = ({ activePage }) => {
                         <SearchInput />
                         {user ? (
                             <>
-                                <button
-                                    type="button"
-                                    className="group relative flex size-10 items-center justify-center rounded-full text-[#203452] transition-colors cursor-pointer hover:bg-[#F1F3F7]"
-                                >
-                                    <ShoppingCart size={21} strokeWidth={1.7} />
+                                <Link href={"/cart"}>
+                                    <button
+                                        type="button"
+                                        className="group relative flex size-10 items-center justify-center rounded-full text-[#203452] transition-colors cursor-pointer hover:bg-[#F1F3F7]"
+                                    >
+                                        <ShoppingCart
+                                            size={21}
+                                            strokeWidth={1.7}
+                                        />
 
-                                    <span className="absolute right-0.5 top-0.5 flex size-4.25 items-center justify-center rounded-full bg-[#203452] text-[9px] font-semibold text-white transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">
-                                        0
-                                    </span>
-                                </button>
+                                        <span className="absolute right-0.5 top-0.5 flex size-4.25 items-center justify-center rounded-full bg-[#203452] text-[9px] font-semibold text-white transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">
+                                            {cartCount}
+                                        </span>
+                                    </button>
+                                </Link>
 
                                 <Link
                                     href="/profile"
@@ -89,7 +109,7 @@ const Navbar: FC<Props> = ({ activePage }) => {
                             >
                                 <ShoppingCart size={21} strokeWidth={1.7} />
                                 <span className="absolute right-0.5 top-0.5 flex size-4 items-center justify-center rounded-full bg-[#203452] text-[9px] font-semibold text-white">
-                                    0
+                                    {cartCount}
                                 </span>
                             </Link>
                         )}

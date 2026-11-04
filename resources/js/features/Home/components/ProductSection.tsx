@@ -1,77 +1,22 @@
-import { Link } from "@inertiajs/react";
-import { ArrowRight, ShoppingCart, Star } from "lucide-react";
+import { ProductType } from "@/features/ProductDetail/types/products";
+import { formatPrice } from "@/lib/utils";
+import { useCartStore } from "@/stores/cart-store";
+import { Link, router } from "@inertiajs/react";
+import {
+    ArrowRight,
+    Check,
+    LoaderCircle,
+    ShoppingCart,
+    Star,
+} from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { FC, useEffect, useRef, useState } from "react";
 
-const products = [
-    {
-        id: 1,
-        name: "MacBook Air M2",
-        category: "Laptop",
-        image: "/image/macbook-air-m2.webp",
-        price: 15000000,
-        originalPrice: 18292683,
-        rating: 4.8,
-        reviews: "1.2rb",
-        discount: 18,
-        slug: "macbook-air-m2",
-    },
-    {
-        id: 2,
-        name: "MacBook Air M2",
-        category: "Laptop",
-        image: "/image/macbook-air-m2.webp",
-        price: 15000000,
-        originalPrice: 18292683,
-        rating: 4.8,
-        reviews: "1.2rb",
-        discount: 18,
-        slug: "macbook-air-m2",
-    },
-    {
-        id: 3,
-        name: "MacBook Air M2",
-        category: "Laptop",
-        image: "/image/macbook-air-m2.webp",
-        price: 15000000,
-        originalPrice: 18292683,
-        rating: 4.8,
-        reviews: "1.2rb",
-        discount: 18,
-        slug: "macbook-air-m2",
-    },
-    {
-        id: 4,
-        name: "MacBook Air M2",
-        category: "Laptop",
-        image: "/image/macbook-air-m2.webp",
-        price: 15000000,
-        originalPrice: 18292683,
-        rating: 4.8,
-        reviews: "1.2rb",
-        discount: 18,
-        slug: "macbook-air-m2",
-    },
-    {
-        id: 5,
-        name: "MacBook Air M2",
-        category: "Laptop",
-        image: "/image/macbook-air-m2.webp",
-        price: 15000000,
-        originalPrice: 18292683,
-        rating: 4.8,
-        reviews: "1.2rb",
-        discount: 18,
-        slug: "macbook-air-m2",
-    },
-];
+type Props = {
+    products: ProductType[];
+};
 
-const formatPrice = (price: number) =>
-    new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        maximumFractionDigits: 0,
-    }).format(price);
-
-const ProductSection = () => {
+const ProductSection: FC<Props> = ({ products }) => {
     return (
         <section
             id="produk-unggulan"
@@ -116,27 +61,81 @@ const ProductSection = () => {
     );
 };
 
-type Product = (typeof products)[number];
-
 type CardProductProps = {
-    product: Product;
+    product: ProductType;
 };
 
+type ButtonStatus = "idle" | "loading" | "success";
+
 const CardProduct = ({ product }: CardProductProps) => {
+    const [status, setStatus] = useState<ButtonStatus>("idle");
+    const { incrementCount } = useCartStore();
+
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
+    const handleAddToCart = () => {
+        if (status !== "idle" || product.stock <= 0) return;
+
+        router.post(
+            "/cart/item",
+            {
+                product_id: product.id,
+                quantity: 1,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+
+                onStart: () => {
+                    setStatus("loading");
+                },
+
+                onSuccess: () => {
+                    setStatus("success");
+                    incrementCount(1);
+                    timeoutRef.current = setTimeout(() => {
+                        setStatus("idle");
+                    }, 2200);
+                },
+
+                onError: () => {
+                    setStatus("idle");
+                },
+
+                onCancel: () => {
+                    setStatus("idle");
+                },
+            },
+        );
+    };
+    const buttonStyles = {
+        idle: "bg-[#203452] hover:bg-[#2c4568] text-white shadow-none",
+        loading: "bg-[#344968] text-white cursor-wait",
+        success:
+            "bg-emerald-600 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-600/20",
+    };
+
+    const buttonLabels = {
+        idle: "Tambah ke Keranjang",
+        loading: "Menambahkan...",
+        success: "Berhasil Ditambahkan!",
+    };
     return (
         <article className="group flex w-64 shrink-0 flex-col overflow-hidden rounded-xl border border-[#E2E6ED] bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:w-68 lg:w-72">
+            {/* Product Image */}
             <Link
                 href={`/products/${product.slug}`}
                 className="relative flex h-48 items-center justify-center overflow-hidden bg-[#F8F9FC] p-5 sm:h-52"
             >
-                {product.discount > 0 && (
-                    <span className="absolute left-3 top-3 z-10 rounded-full bg-[#203452] px-3 py-1 text-xs font-semibold text-white">
-                        Diskon {product.discount}%
-                    </span>
-                )}
-
                 <img
-                    src={product.image}
+                    src={product.product_images[0].image}
                     alt={product.name}
                     loading="lazy"
                     className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
@@ -144,52 +143,91 @@ const CardProduct = ({ product }: CardProductProps) => {
             </Link>
 
             <div className="flex flex-1 flex-col p-4">
-                <div>
-                    <p className="text-xs font-medium uppercase tracking-wider text-[#98A2B3]">
-                        {product.category}
+                {/* Category & Name */}
+                <div className="space-y-1.5">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[#98A2B3]">
+                        {product.category.name}
                     </p>
 
-                    <Link
-                        href={`/products/${product.slug}`}
-                        className="mt-1 block"
-                    >
-                        <h3 className="line-clamp-2 min-h-12 text-base font-semibold leading-snug text-[#203452] transition-colors group-hover:text-[#526B91]">
+                    <Link href={`/products/${product.slug}`} className="block">
+                        <h3 className="line-clamp-2 min-h-11 text-[15px] font-semibold leading-snug text-[#203452] transition-colors group-hover:text-[#526B91]">
                             {product.name}
                         </h3>
                     </Link>
                 </div>
 
-                <div className="mt-3">
-                    <p className="text-lg font-bold text-[#203452]">
-                        {formatPrice(product.price)}
+                {/* Price */}
+                <div className="mt-2.5">
+                    <p className="text-lg font-bold leading-tight text-[#203452]">
+                        {formatPrice(Number(product.price))}
                     </p>
-
-                    {product.originalPrice > product.price && (
-                        <p className="mt-0.5 text-sm text-[#98A2B3] line-through">
-                            {formatPrice(product.originalPrice)}
-                        </p>
-                    )}
                 </div>
 
-                <div className="mt-3 flex items-center gap-1.5 text-sm">
+                {/* Rating */}
+                <div className="mt-2.5 flex items-center gap-1.5 text-xs">
                     <Star
-                        size={16}
+                        size={15}
                         fill="#EAB308"
                         className="shrink-0 text-yellow-500"
                     />
-                    <span className="font-semibold">{product.rating}</span>
-                    <span className="text-[#98A2B3]">
-                        ({product.reviews} ulasan)
-                    </span>
+
+                    <span className="font-semibold text-[#203452]">4.8</span>
+
+                    <span className="text-[#98A2B3]">(12 ulasan)</span>
                 </div>
 
-                <button
+                {/* Add to Cart */}
+                <motion.button
                     type="button"
-                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-[#203452] px-3 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#2D466A] cursor-pointer active:scale-[0.98]"
+                    onClick={handleAddToCart}
+                    disabled={
+                        product.stock <= 0 ||
+                        (status !== "idle" && status !== "success")
+                    }
+                    whileHover={status === "idle" ? { scale: 1.02 } : {}}
+                    whileTap={status === "idle" ? { scale: 0.97 } : {}}
+                    animate={{
+                        scale: status === "success" ? [1, 1.035, 1] : 1,
+                    }}
+                    transition={{ duration: 0.3 }}
+                    className={`mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm cursor-pointer font-semibold transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 ${buttonStyles[status]}`}
                 >
-                    <ShoppingCart size={17} />
-                    Tambah ke Keranjang
-                </button>
+                    <AnimatePresence mode="wait" initial={false}>
+                        <motion.span
+                            key={status}
+                            initial={{ opacity: 0, y: 8, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -8, scale: 0.9 }}
+                            transition={{ duration: 0.2 }}
+                            className="flex items-center justify-center gap-2"
+                        >
+                            {status === "idle" && <ShoppingCart size={18} />}
+
+                            {status === "loading" && (
+                                <LoaderCircle
+                                    size={18}
+                                    className="animate-spin"
+                                />
+                            )}
+
+                            {status === "success" && (
+                                <motion.span
+                                    initial={{ scale: 0, rotate: -45 }}
+                                    animate={{ scale: 1, rotate: 0 }}
+                                    transition={{
+                                        type: "spring",
+                                        stiffness: 400,
+                                        damping: 12,
+                                    }}
+                                >
+                                    <Check size={19} strokeWidth={3} />
+                                </motion.span>
+                            )}
+
+                            {buttonLabels[status]}
+                        </motion.span>
+                    </AnimatePresence>
+                </motion.button>
             </div>
         </article>
     );
