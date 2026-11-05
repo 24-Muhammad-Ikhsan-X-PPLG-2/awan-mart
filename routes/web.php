@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/items/bulk', [CartController::class, 'cart_add_bulk']);
         Route::delete('/items', [CartController::class, 'cart_delete']);
     });
+    Route::post('/checkout', [CheckoutController::class, 'index']);
 });
 // Detail Product
 Route::get('/products/{product:slug}', [HomeController::class, 'product']);

@@ -98,12 +98,10 @@ const useCart = ({ dataCart }: { dataCart: CartItem[] }) => {
         if (selectedItems.length === 0) return;
 
         const checkoutItems = selectedItems.map((item) => ({
-            product_id: item.id,
+            product_id: item.product.id,
             quantity: item.quantity,
         }));
 
-        // TODO: Ganti URL sesuai route checkout Laravel.
-        // Harga harus dihitung ulang oleh backend.
         router.post("/checkout", {
             items: checkoutItems,
         });

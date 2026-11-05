@@ -7,12 +7,15 @@ import EmptyCart from "@/features/Cart/components/EmptyCart";
 import useCart from "@/features/Cart/hooks/useCart";
 import { FC } from "react";
 import { CartItem } from "@/features/Cart/types/carts";
+import { usePage } from "@inertiajs/react";
+import ErrorAlert from "@/features/Cart/components/ErrorAlert";
 
 type Props = {
     dataCart: CartItem[];
 };
 
 const CartPage: FC<Props> = ({ dataCart }) => {
+    const { errors } = usePage().props;
     const {
         allSelected,
         cart,
@@ -45,6 +48,7 @@ const CartPage: FC<Props> = ({ dataCart }) => {
 
                 {/* Heading */}
                 <Heading totalItems={totalItems} />
+                <ErrorAlert errors={errors} />
 
                 {cart.length > 0 ? (
                     <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_380px]">
