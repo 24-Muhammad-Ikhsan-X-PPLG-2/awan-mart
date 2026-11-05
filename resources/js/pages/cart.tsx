@@ -9,6 +9,7 @@ import { FC } from "react";
 import { CartItem } from "@/features/Cart/types/carts";
 import { usePage } from "@inertiajs/react";
 import ErrorAlert from "@/features/Cart/components/ErrorAlert";
+import { AnimatePresence, motion } from "motion/react";
 
 type Props = {
     dataCart: CartItem[];
@@ -49,33 +50,46 @@ const CartPage: FC<Props> = ({ dataCart }) => {
                 {/* Heading */}
                 <Heading totalItems={totalItems} />
                 <ErrorAlert errors={errors} />
+                <AnimatePresence mode="sync">
+                    {cart.length > 0 ? (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_380px]"
+                            key={"cart-content"}
+                        >
+                            {/* Cart Content */}
+                            <CartContent
+                                allSelected={allSelected}
+                                cart={cart}
+                                removeItem={removeItem}
+                                removeSelected={removeSelected}
+                                selectedItems={selectedItems}
+                                toggleItem={toggleItem}
+                                toggleSelectAll={toggleSelectAll}
+                                setCart={setCart}
+                            />
 
-                {cart.length > 0 ? (
-                    <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_380px]">
-                        {/* Cart Content */}
-                        <CartContent
-                            allSelected={allSelected}
-                            cart={cart}
-                            removeItem={removeItem}
-                            removeSelected={removeSelected}
-                            selectedItems={selectedItems}
-                            toggleItem={toggleItem}
-                            toggleSelectAll={toggleSelectAll}
-                            setCart={setCart}
-                        />
-
-                        {/* Order Summary */}
-                        <OrderSummary
-                            handleCheckout={handleCheckout}
-                            selectedCount={selectedCount}
-                            selectedItems={selectedItems}
-                            subtotal={subtotal}
-                        />
-                    </div>
-                ) : (
-                    /* Empty Cart */
-                    <EmptyCart />
-                )}
+                            {/* Order Summary */}
+                            <OrderSummary
+                                handleCheckout={handleCheckout}
+                                selectedCount={selectedCount}
+                                selectedItems={selectedItems}
+                                subtotal={subtotal}
+                            />
+                        </motion.div>
+                    ) : (
+                        /* Empty Cart */
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        >
+                            <EmptyCart />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </section>
         </main>
     );

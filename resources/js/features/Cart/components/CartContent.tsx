@@ -4,6 +4,7 @@ import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
 import { CartItem } from "../types/carts";
 import { Dispatch, FC, SetStateAction, useEffect, useRef } from "react";
 import { useCartStore } from "@/stores/cart-store";
+import { motion, AnimatePresence } from "motion/react";
 
 type Props = {
     allSelected: boolean;
@@ -108,105 +109,124 @@ const CartContent: FC<Props> = ({
 
             {/* Cart Items */}
             <div className="divide-y divide-[#E2E6ED]">
-                {cart.map((item) => (
-                    <div
-                        key={item.id}
-                        className={`grid grid-cols-1 gap-5 p-5 transition-colors sm:p-6 md:grid-cols-[1fr_130px_120px_40px] md:items-center md:gap-4 ${
-                            item.product.selected ? "bg-white" : "bg-[#FCFCFD]"
-                        }`}
-                    >
-                        {/* Product */}
-                        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-                            <input
-                                type="checkbox"
-                                checked={item.product.selected}
-                                onChange={() => toggleItem(item.id)}
-                                className="size-4 shrink-0 cursor-pointer accent-[#203452]"
-                                aria-label={`Pilih ${item.product.name}`}
-                            />
-
-                            <div className="flex size-24 shrink-0 items-center justify-center rounded-lg bg-[#F1F3F7] p-3 sm:size-28">
-                                <img
-                                    src={item.product.product_images[0].image}
-                                    alt={item.product.name}
-                                    className="h-full w-full object-contain"
+                <AnimatePresence mode="sync">
+                    {cart.map((item) => (
+                        <motion.div
+                            exit={{
+                                x: -1000,
+                                backgroundColor: "red",
+                            }}
+                            transition={{
+                                duration: 0.3,
+                            }}
+                            key={item.id}
+                            className={`grid grid-cols-1 gap-5 p-5 transition-colors sm:p-6 md:grid-cols-[1fr_130px_120px_40px] md:items-center md:gap-4 ${
+                                item.product.selected
+                                    ? "bg-white"
+                                    : "bg-[#FCFCFD]"
+                            }`}
+                        >
+                            {/* Product */}
+                            <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+                                <input
+                                    type="checkbox"
+                                    checked={item.product.selected}
+                                    onChange={() => toggleItem(item.id)}
+                                    className="size-4 shrink-0 cursor-pointer accent-[#203452]"
+                                    aria-label={`Pilih ${item.product.name}`}
                                 />
+
+                                <div className="flex size-24 shrink-0 items-center justify-center rounded-lg bg-[#F1F3F7] p-3 sm:size-28">
+                                    <img
+                                        src={
+                                            item.product.product_images[0].image
+                                        }
+                                        alt={item.product.name}
+                                        className="h-full w-full object-contain"
+                                    />
+                                </div>
+
+                                <div className="min-w-0">
+                                    <p className="mb-1 text-xs font-medium text-[#667085]">
+                                        {item.product.category.name}
+                                    </p>
+
+                                    <h3 className="font-semibold text-[#203452] sm:text-base">
+                                        {item.product.name}
+                                    </h3>
+
+                                    <p className="mt-2 text-xs text-[#667085]">
+                                        Stok tersedia: {item.product.stock}
+                                    </p>
+
+                                    <p className="mt-2 font-semibold text-[#203452] md:hidden">
+                                        {formatPrice(
+                                            Number(item.product.price),
+                                        )}
+                                    </p>
+                                </div>
                             </div>
 
-                            <div className="min-w-0">
-                                <p className="mb-1 text-xs font-medium text-[#667085]">
-                                    {item.product.category.name}
-                                </p>
-
-                                <h3 className="font-semibold text-[#203452] sm:text-base">
-                                    {item.product.name}
-                                </h3>
-
-                                <p className="mt-2 text-xs text-[#667085]">
-                                    Stok tersedia: {item.product.stock}
-                                </p>
-
-                                <p className="mt-2 font-semibold text-[#203452] md:hidden">
+                            {/* Price */}
+                            <div className="hidden text-center md:block">
+                                <p className="text-sm font-semibold">
                                     {formatPrice(Number(item.product.price))}
                                 </p>
                             </div>
-                        </div>
 
-                        {/* Price */}
-                        <div className="hidden text-center md:block">
-                            <p className="text-sm font-semibold">
-                                {formatPrice(Number(item.product.price))}
-                            </p>
-                        </div>
-
-                        {/* Quantity */}
-                        <div className="flex items-center justify-between md:justify-center">
-                            <span className="text-xs font-medium text-[#667085] md:hidden">
-                                Jumlah
-                            </span>
-
-                            <div className="flex items-center rounded-lg border border-[#E2E6ED]">
-                                <button
-                                    type="button"
-                                    onClick={() => updateQuantity(item.id, -1)}
-                                    disabled={item.quantity <= 1}
-                                    className="flex size-9 items-center justify-center text-[#667085] transition hover:bg-[#F1F3F7] disabled:cursor-not-allowed disabled:opacity-30"
-                                    aria-label="Kurangi jumlah"
-                                >
-                                    <Minus size={14} />
-                                </button>
-
-                                <span className="w-9 text-center text-sm font-semibold">
-                                    {item.quantity}
+                            {/* Quantity */}
+                            <div className="flex items-center justify-between md:justify-center">
+                                <span className="text-xs font-medium text-[#667085] md:hidden">
+                                    Jumlah
                                 </span>
 
+                                <div className="flex items-center rounded-lg border border-[#E2E6ED]">
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            updateQuantity(item.id, -1)
+                                        }
+                                        disabled={item.quantity <= 1}
+                                        className="flex size-9 items-center justify-center text-[#667085] transition hover:bg-[#F1F3F7] disabled:cursor-not-allowed disabled:opacity-30"
+                                        aria-label="Kurangi jumlah"
+                                    >
+                                        <Minus size={14} />
+                                    </button>
+
+                                    <span className="w-9 text-center text-sm font-semibold">
+                                        {item.quantity}
+                                    </span>
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            updateQuantity(item.id, 1)
+                                        }
+                                        disabled={
+                                            item.quantity >= item.product.stock
+                                        }
+                                        className="flex size-9 items-center justify-center text-[#667085] transition hover:bg-[#F1F3F7] disabled:cursor-not-allowed disabled:opacity-30"
+                                        aria-label="Tambah jumlah"
+                                    >
+                                        <Plus size={14} />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Remove */}
+                            <div className="flex justify-end">
                                 <button
                                     type="button"
-                                    onClick={() => updateQuantity(item.id, 1)}
-                                    disabled={
-                                        item.quantity >= item.product.stock
-                                    }
-                                    className="flex size-9 items-center justify-center text-[#667085] transition hover:bg-[#F1F3F7] disabled:cursor-not-allowed disabled:opacity-30"
-                                    aria-label="Tambah jumlah"
+                                    onClick={() => removeItem(item.id)}
+                                    className="flex size-9 items-center justify-center rounded-lg text-[#98A2B3] transition hover:bg-red-50 hover:text-red-600"
+                                    aria-label={`Hapus ${item.product.name}`}
                                 >
-                                    <Plus size={14} />
+                                    <Trash2 size={17} />
                                 </button>
                             </div>
-                        </div>
-
-                        {/* Remove */}
-                        <div className="flex justify-end">
-                            <button
-                                type="button"
-                                onClick={() => removeItem(item.id)}
-                                className="flex size-9 items-center justify-center rounded-lg text-[#98A2B3] transition hover:bg-red-50 hover:text-red-600"
-                                aria-label={`Hapus ${item.product.name}`}
-                            >
-                                <Trash2 size={17} />
-                            </button>
-                        </div>
-                    </div>
-                ))}
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
             </div>
 
             {/* Cart Footer */}
