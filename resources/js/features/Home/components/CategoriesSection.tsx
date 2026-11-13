@@ -59,7 +59,7 @@ const CategoryRender: FC<PropsCategoryRender> = ({ category }) => {
         : LayoutGridCircles;
     return (
         <Link
-            href={category.name.toLowerCase()}
+            href={`/categories/${category.name.toLowerCase()}`}
             className="group flex h-36 w-36 shrink-0 flex-col items-center justify-center gap-3 rounded-xl border border-[#E2E6ED] bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#526B91]/40 hover:shadow-lg sm:h-40 sm:w-44 lg:h-44 lg:w-52"
         >
             <Icon

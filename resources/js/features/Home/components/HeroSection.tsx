@@ -1,4 +1,5 @@
 import { appName } from "@/constant";
+import { Link } from "@inertiajs/react";
 import { ArrowRight } from "lucide-react";
 
 const HeroSection = () => {
@@ -35,14 +36,17 @@ const HeroSection = () => {
                     </p>
                     {/* CTA */}
                     <div className="mt-8 flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row lg:items-start">
-                        <button className="flex w-full items-center justify-center gap-3 rounded-lg bg-[#203452] px-7 py-3.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2D466A] hover:shadow-xl active:scale-[0.98] sm:w-auto cursor-pointer">
-                            Belanja Sekarang
-                            <ArrowRight size={18} />
-                        </button>
-
-                        <button className="w-full rounded-lg border border-[#203452]/25 bg-white/70 px-7 py-3.5 text-sm font-semibold text-[#203452] transition-all duration-300 hover:border-[#203452] hover:bg-white active:scale-[0.98] sm:w-auto cursor-pointer">
-                            Lihat Katalog
-                        </button>
+                        <Link href={"/products"}>
+                            <button className="flex w-full items-center justify-center gap-3 rounded-lg bg-[#203452] px-7 py-3.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2D466A] hover:shadow-xl active:scale-[0.98] sm:w-auto cursor-pointer">
+                                Belanja Sekarang
+                                <ArrowRight size={18} />
+                            </button>
+                        </Link>
+                        <Link href={"/products"}>
+                            <button className="w-full rounded-lg border border-[#203452]/25 bg-white/70 px-7 py-3.5 text-sm font-semibold text-[#203452] transition-all duration-300 hover:border-[#203452] hover:bg-white active:scale-[0.98] sm:w-auto cursor-pointer">
+                                Lihat Katalog
+                            </button>
+                        </Link>
                     </div>
                     <div className="mt-8 flex items-center gap-3">
                         {/* Dekorasi biar tambah keren */}
