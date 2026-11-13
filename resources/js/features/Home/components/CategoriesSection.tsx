@@ -1,8 +1,15 @@
-import { categories } from "@/constant";
+import { iconMap } from "@/constant";
+import { Category } from "@/types/types";
 import { Link } from "@inertiajs/react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Laptop, LayoutGridCircles } from "lucide-react";
+import { FC } from "react";
 
-const CategoriesSection = () => {
+type Props = {
+    categories: Category[] | null;
+};
+
+const CategoriesSection: FC<Props> = ({ categories }) => {
+    if (!categories) return <></>;
     return (
         <section
             id="kategori"
@@ -34,25 +41,37 @@ const CategoriesSection = () => {
             <div className="-mx-4 overflow-x-auto px-4 py-4 sm:mx-0 sm:px-0">
                 <div className="flex w-max gap-3 sm:gap-4">
                     {categories.map((item) => (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className="group flex h-36 w-36 shrink-0 flex-col items-center justify-center gap-3 rounded-xl border border-[#E2E6ED] bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#526B91]/40 hover:shadow-lg sm:h-40 sm:w-44 lg:h-44 lg:w-52"
-                        >
-                            <item.Icon
-                                size={42}
-                                strokeWidth={1.6}
-                                className="text-[#526B91] transition-transform duration-300 group-hover:scale-110 sm:size-12"
-                            />
-
-                            <span className="max-w-[85%] text-center text-sm font-semibold sm:text-base">
-                                {item.name}
-                            </span>
-                        </Link>
+                        <CategoryRender category={item} key={item.name} />
                     ))}
                 </div>
             </div>
         </section>
+    );
+};
+
+type PropsCategoryRender = {
+    category: Category;
+};
+
+const CategoryRender: FC<PropsCategoryRender> = ({ category }) => {
+    const Icon = category.icon
+        ? (iconMap[category.icon] ?? LayoutGridCircles)
+        : LayoutGridCircles;
+    return (
+        <Link
+            href={category.name.toLowerCase()}
+            className="group flex h-36 w-36 shrink-0 flex-col items-center justify-center gap-3 rounded-xl border border-[#E2E6ED] bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#526B91]/40 hover:shadow-lg sm:h-40 sm:w-44 lg:h-44 lg:w-52"
+        >
+            <Icon
+                size={42}
+                strokeWidth={1.6}
+                className="text-[#526B91] transition-transform duration-300 group-hover:scale-110 sm:size-12"
+            />
+
+            <span className="max-w-[85%] text-center text-sm font-semibold sm:text-base">
+                {category.name}
+            </span>
+        </Link>
     );
 };
 

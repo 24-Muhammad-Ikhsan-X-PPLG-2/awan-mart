@@ -51,3 +51,12 @@ export type CartItem = {
         selected: boolean;
     };
 };
+
+export type Category = {
+    id: number;
+    icon: string | null;
+    name: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
+};

@@ -9,12 +9,13 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property string $icon
  * @property string $name
  * @property string $description
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'description'])]
+#[Fillable(['name', 'description', 'icon'])]
 class Category extends Model
 {
     protected $table = 'categories';

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
 use Inertia\Inertia;
 
@@ -14,8 +15,10 @@ class HomeController extends Controller
             'category',
             'product_images'
         ])->limit(4)->get();
+        $categories = Category::limit(7)->get();
         return Inertia::render('home', [
-            'products' => $products
+            'products' => $products,
+            'categories' => $categories
         ]);
     }
     public function product(Product $product)

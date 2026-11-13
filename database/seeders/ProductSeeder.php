@@ -24,34 +24,42 @@ class ProductSeeder extends Seeder
         $categories = [
             [
                 'name' => 'Laptop',
+                'icon' => 'Laptop',
                 'description' => 'Laptop untuk produktivitas, bisnis, pendidikan, dan gaming.',
             ],
             [
                 'name' => 'Smartphone',
+                'icon' => 'Smartphone',
                 'description' => 'Smartphone dengan teknologi dan fitur terkini.',
             ],
             [
                 'name' => 'Tablet',
+                'icon' => 'Tablet',
                 'description' => 'Tablet untuk hiburan, kreativitas, dan produktivitas.',
             ],
             [
                 'name' => 'Komputer',
+                'icon' => 'Monitor',
                 'description' => 'Komputer desktop dan mini PC untuk kebutuhan personal maupun profesional.',
             ],
             [
                 'name' => 'Monitor',
+                'icon' => 'Monitor',
                 'description' => 'Monitor untuk gaming, pekerjaan profesional, dan multimedia.',
             ],
             [
                 'name' => 'Aksesoris',
+                'icon' => 'Keyboard',
                 'description' => 'Aksesoris komputer seperti keyboard, mouse, dan perangkat pendukung.',
             ],
             [
                 'name' => 'Audio',
+                'icon' => 'Headphones',
                 'description' => 'Perangkat audio seperti headphone, earphone, dan speaker.',
             ],
             [
                 'name' => 'Storage',
+                'icon' => 'HardDrive',
                 'description' => 'Perangkat penyimpanan data seperti SSD dan media penyimpanan eksternal.',
             ],
         ];
@@ -61,7 +69,7 @@ class ProductSeeder extends Seeder
         foreach ($categories as $item) {
             $category = Category::query()->firstOrCreate(
                 ['name' => $item['name']],
-                ['description' => $item['description']]
+                ['description' => $item['description'], 'icon' => $item['icon']]
             );
 
             $categoryIds[$item['name']] = $category->id;
