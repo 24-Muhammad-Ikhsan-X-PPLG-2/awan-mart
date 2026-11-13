@@ -4,7 +4,7 @@ import CTASection from "@/features/Home/components/CTASection";
 import Footer from "@/features/Home/components/Footer";
 import HeroSection from "@/features/Home/components/HeroSection";
 import ProductSection from "@/features/Home/components/ProductSection";
-import { ProductType } from "@/features/ProductDetail/types/products";
+import { ProductType } from "@/types/types";
 import { FC } from "react";
 
 type Props = {

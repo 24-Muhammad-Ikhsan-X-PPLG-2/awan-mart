@@ -6,7 +6,7 @@ import OrderSummary from "@/features/Cart/components/OrderSummary";
 import EmptyCart from "@/features/Cart/components/EmptyCart";
 import useCart from "@/features/Cart/hooks/useCart";
 import { FC } from "react";
-import { CartItem } from "@/features/Cart/types/carts";
+import { CartItem } from "@/types/types";
 import { usePage } from "@inertiajs/react";
 import ErrorAlert from "@/features/Cart/components/ErrorAlert";
 import { AnimatePresence, motion } from "motion/react";

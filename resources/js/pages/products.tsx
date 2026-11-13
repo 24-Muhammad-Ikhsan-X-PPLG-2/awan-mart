@@ -1,5 +1,5 @@
 import Navbar from "@/components/navbar";
-import { ProductType } from "@/features/ProductDetail/types/products";
+import { ProductType } from "@/types/types";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart-store";
 import { Link, router } from "@inertiajs/react";

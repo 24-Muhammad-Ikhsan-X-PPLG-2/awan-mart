@@ -1,6 +1,6 @@
 import { categories } from "@/constant";
 import { Link } from "@inertiajs/react";
-import { ArrowRight, Laptop } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const CategoriesSection = () => {
     return (

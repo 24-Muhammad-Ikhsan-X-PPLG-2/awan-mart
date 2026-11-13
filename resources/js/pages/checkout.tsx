@@ -5,7 +5,7 @@ import Breadcrumb from "@/features/Checkout/components/breadcrumb";
 import HeadingCheckout from "@/features/Checkout/components/HeadingCheckout";
 import EmptyCheckout from "@/features/Checkout/components/EmptyCheckout";
 import CheckoutContent from "@/features/Checkout/components/CheckoutContent";
-import { Address, CheckoutItem } from "@/features/Checkout/types";
+import { Address, CheckoutItem } from "@/types/types";
 
 type CheckoutProps = {
     items: CheckoutItem[];

@@ -1,10 +1,15 @@
 import {
     Cable,
     Gamepad2,
+    HardDrive,
     Headphones,
+    Keyboard,
     Laptop,
+    LucideIcon,
     Monitor,
+    Mouse,
     Smartphone,
+    Tablet,
 } from "lucide-react";
 
 type NavLinkType = {
@@ -18,6 +23,17 @@ export const navlinks: NavLinkType[] = [
     { display: "Tentang Kami", href: "/about" },
     { display: "Bantuan", href: "/help" },
 ];
+
+export const iconMap: Record<string, LucideIcon> = {
+    Laptop,
+    Smartphone,
+    Tablet,
+    Monitor,
+    Headphones,
+    HardDrive,
+    Keyboard,
+    Mouse,
+};
 
 export const categories = [
     { name: "Laptop", href: "/categories/laptop", Icon: Laptop },

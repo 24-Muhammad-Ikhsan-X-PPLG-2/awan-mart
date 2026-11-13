@@ -1,4 +1,4 @@
-import { Address } from "@/features/Checkout/types";
+import { Address } from "@/types/types";
 import { AnimatePresence, motion } from "motion/react";
 import { FC, useEffect, useState } from "react";
 import {

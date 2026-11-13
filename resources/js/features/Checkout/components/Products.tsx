@@ -1,7 +1,7 @@
-import { formatPrice } from '@/lib/utils';
-import { CheckoutItem } from '@/features/Checkout/types';
-import { Package } from 'lucide-react';
-import { FC } from 'react';
+import { formatPrice } from "@/lib/utils";
+import { CheckoutItem } from "@/types/types";
+import { Package } from "lucide-react";
+import { FC } from "react";
 
 type Props = {
     items: CheckoutItem[];
