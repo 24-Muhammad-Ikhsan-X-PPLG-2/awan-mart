@@ -10,10 +10,10 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $products = Product::all()->load([
+        $products = Product::with([
             'category',
             'product_images'
-        ]);
+        ])->limit(4)->get();
         return Inertia::render('home', [
             'products' => $products
         ]);

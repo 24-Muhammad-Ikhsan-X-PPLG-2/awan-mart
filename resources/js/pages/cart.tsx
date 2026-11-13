@@ -70,7 +70,7 @@ const CartPage: FC<Props> = ({ dataCart }) => {
                                 toggleSelectAll={toggleSelectAll}
                                 setCart={setCart}
                             />
-
+                            {/* i text a poscard sent to you, did it go trough. sending all my love to you. You are the moonlight of my life every night, givin' all my love to you.  */}
                             {/* Order Summary */}
                             <OrderSummary
                                 handleCheckout={handleCheckout}

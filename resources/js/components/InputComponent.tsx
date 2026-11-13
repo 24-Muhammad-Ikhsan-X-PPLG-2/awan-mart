@@ -1,6 +1,6 @@
-import { ComponentPropsWithRef, ReactNode } from "react";
+import { ComponentPropsWithRef, ReactNode } from 'react';
 
-type InputComponentProps = ComponentPropsWithRef<"input"> & {
+type InputComponentProps = ComponentPropsWithRef<'input'> & {
     label: string;
     Icon?: ReactNode;
     error?: string;
@@ -15,31 +15,31 @@ const InputComponent = ({
     buttonRight,
     ...props
 }: InputComponentProps) => {
-    const id = label.toLowerCase().replace(" ", "-");
+    const id = label.toLowerCase().replace(' ', '-');
 
     return (
         <div className="flex flex-col">
             <label
                 htmlFor={id}
-                className="font-semibold w-fit text-sm sm:text-base"
+                className="w-fit text-sm font-semibold sm:text-base"
             >
                 {label}
             </label>
 
             <div
-                className={`group flex items-center justify-between border-2 transition-colors mt-2 rounded-lg ${
+                className={`group mt-2 flex min-h-12 items-center justify-between rounded-md border transition-colors focus-within:ring-2 focus-within:ring-[#526B91]/10 ${
                     error
-                        ? "border-red-500"
-                        : "border-gray-400 focus-within:border-[#203452]"
+                        ? 'border-red-400 focus-within:border-red-500'
+                        : 'border-[#D5DBE4] focus-within:border-[#526B91]'
                 }`}
             >
-                <div className="flex items-center gap-1 w-full">
+                <div className="flex w-full items-center gap-1">
                     {Icon && (
                         <span
-                            className={`transition-colors pl-3 ${
+                            className={`pl-3 transition-colors ${
                                 error
-                                    ? "text-red-500"
-                                    : "text-gray-500 group-focus-within:text-[#203452]"
+                                    ? 'text-red-500'
+                                    : 'text-[#98A2B3] group-focus-within:text-[#203452]'
                             }`}
                         >
                             {Icon}
@@ -49,7 +49,7 @@ const InputComponent = ({
                     <input
                         ref={ref}
                         id={id}
-                        className="outline-none w-full min-w-0 bg-transparent text-sm sm:text-base placeholder:text-gray-400 h-full p-3"
+                        className="h-full w-full min-w-0 bg-transparent p-3 text-sm text-[#203452] outline-none placeholder:text-[#98A2B3] sm:text-base"
                         aria-invalid={!!error}
                         {...props}
                     />

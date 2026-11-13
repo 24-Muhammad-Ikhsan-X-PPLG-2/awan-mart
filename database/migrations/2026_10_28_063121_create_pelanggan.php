@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users', 'id')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name')->unique();
-            $table->text('alamat')->nullable();
+            $table->json('alamat')->nullable();
             $table->string('telp')->nullable();
         });
     }

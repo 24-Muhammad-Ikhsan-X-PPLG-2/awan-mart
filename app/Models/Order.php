@@ -12,15 +12,16 @@ use Override;
 
 enum OrderStatus: string
 {
-    case Pending = 'pending';
-    case Process = 'process';
+    case PendingPayment = 'pending_payment';
+    case Processing = 'processing';
     case Shipped = 'shipped';
     case Completed = 'completed';
-    case Cancelled = 'cancelled';
+    case Canceled = 'canceled';
 }
 
 /**
  * @property int $id
+ * @property string $order_number
  * @property int $user_id
  * @property string $total_price
  * @property string $shipping_address
@@ -28,25 +29,38 @@ enum OrderStatus: string
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['user_id', 'total_price', 'shipping_address', 'status'])]
+#[Fillable([
+    'order_number',
+    'user_id',
+    'total_price',
+    'shipping_address',
+    'status',
+])]
 class Order extends Model
 {
     protected $table = 'orders';
+
     #[Override]
-    protected function casts()
+    protected function casts(): array
     {
         return [
-            'total_price' => 'decimal:2'
+            'total_price' => 'decimal:2',
+            'status' => OrderStatus::class,
         ];
     }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-    public function order_items(): HasMany
+
+    /** @return HasMany<OrderItem, $this> */
+    public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    /** @return HasOne<Payment, $this> */
     public function payment(): HasOne
     {
         return $this->hasOne(Payment::class);

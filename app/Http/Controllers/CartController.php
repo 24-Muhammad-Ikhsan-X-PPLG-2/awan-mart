@@ -14,14 +14,20 @@ class CartController extends Controller
     public function cart_view()
     {
         $user = Auth::user();
-        $cart = Cart::query()->where('user_id', '=', $user->id)->first()->with([
+        $checkCart = Cart::query()->where('user_id', '=', $user->id)->first();
+        if (!$checkCart) {
+            $checkCart = Cart::query()->create([
+                'user_id' => $user->id
+            ]);
+        }
+        $cart = $checkCart->with([
             'cart_items' => [
                 'product' => [
                     'category',
                     'product_images',
                 ]
             ]
-        ])->get()->first();
+        ])->get()->where('user_id', '=', $user->id)->first();
         if (!$cart) {
             $cart = Cart::query()->create([
                 'user_id' => $user->id
