@@ -337,6 +337,14 @@ class ProductSeeder extends Seeder
                 'stock' => 14,
                 'image' => 'photo-1591488320449-011701bb6704',
             ],
+            [
+                'category' => 'Smartphone',
+                'name' => 'iPhone 18 Pro Max Burgundy',
+                'description' => 'Smartphone flagship Apple dengan desain premium berwarna Burgundy, sistem kamera canggih, dan performa tinggi untuk kebutuhan sehari-hari maupun profesional.',
+                'price' => 28999000,
+                'stock' => 8,
+                'image' => 'photo-1790997572873-8025224f5df8',
+            ],
         ];
 
         /*
