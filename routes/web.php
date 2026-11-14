@@ -2,14 +2,21 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MidtransNotificationController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/products', [ProductsController::class, 'index']);
+Route::prefix('/categories')->group(function () {
+    Route::get('/get', [CategoryController::class, 'get']);
+    Route::get('/', [CategoryController::class, 'view']);
+});
+Route::post('/payment/notification', MidtransNotificationController::class);
 Route::prefix('auth')->group(function () {
     // Buat authentication
     Route::middleware(['guest'])->group(function () {
@@ -36,10 +43,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checkout/confirm-payment', [CheckoutController::class, 'confirmPayment']);
     Route::get('/checkout/payment/{orderNumber}', [CheckoutController::class, 'pendingPayment']);
     Route::post('/checkout/payment/{orderNumber}/cancel', [CheckoutController::class, 'cancelPayment']);
+    Route::get('/payment/finish', [CheckoutController::class, 'finish'])
+        ->name('payment.finish');
     Route::get('/checkout', function () {
         return redirect()->to('/cart');
     });
     Route::post('/user/address', [UserController::class, 'address']);
+    Route::get('/profile', [UserController::class, 'profile']);
+    Route::put('/profile', [UserController::class, 'updateProfile']);
 });
 // Detail Product
 Route::get('/products/{product:slug}', [HomeController::class, 'product']);
+Route::get('/search/products', [ProductsController::class, 'search'])
+    ->name('products.search');

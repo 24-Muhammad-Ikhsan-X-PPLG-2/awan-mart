@@ -9,9 +9,10 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
- * @property string $icon
+ * @property string|null $icon
  * @property string $name
- * @property string $description
+ * @property string|null $description
+ * @property-read int|null $products_count
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -19,6 +20,7 @@ use Illuminate\Support\Carbon;
 class Category extends Model
 {
     protected $table = 'categories';
+
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);

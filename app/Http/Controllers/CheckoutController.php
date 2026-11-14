@@ -10,6 +10,7 @@ use App\Models\PaymentStatus;
 use App\Models\Pelanggan;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\MidtransPaymentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 use Midtrans\Config;
 use Midtrans\Snap;
 use Midtrans\Transaction;
@@ -26,6 +28,10 @@ class CheckoutController extends Controller
 {
     private const SHIPPING_COST = 15000;
 
+    /**
+     * Menyiapkan halaman checkout dari produk yang dipilih, mengecek ketersediaan stok,
+     * dan mengirimkan alamat pelanggan beserta rincian belanja ke frontend.
+     */
     public function index(Request $req)
     {
         $user = Auth::user();
@@ -72,6 +78,10 @@ class CheckoutController extends Controller
         ]);
     }
 
+    /**
+     * Membuat order dan payment, atau memakai ulang transaksi pending yang cocok.
+     * Setelah Snap siap, item yang ikut checkout dihapus dari keranjang.
+     */
     public function store(Request $req)
     {
         $validated = $req->validate([
@@ -94,6 +104,7 @@ class CheckoutController extends Controller
         try {
             [$order, $payment, $itemDetails] = DB::transaction(
                 function () use ($validated, $user) {
+                    // Jaga stok tetap konsisten saat beberapa checkout berjalan bersamaan.
                     User::query()
                         ->whereKey($user->id)
                         ->lockForUpdate()
@@ -343,7 +354,11 @@ class CheckoutController extends Controller
         }
     }
 
-    public function confirmPayment(Request $req): JsonResponse
+    /**
+     * Memeriksa status transaksi langsung ke Midtrans untuk order milik pengguna aktif,
+     * lalu menyimpan status pembayaran dan order jika hasilnya sudah terverifikasi.
+     */
+    public function confirmPayment(Request $req, MidtransPaymentService $payments): JsonResponse
     {
         $validated = $req->validate([
             'order_number' => ['required', 'string'],
@@ -371,72 +386,17 @@ class CheckoutController extends Controller
         }
 
         try {
-            Config::$serverKey = config('services.midtrans.server_key');
-            Config::$isProduction = config('services.midtrans.is_production');
+            $transaction = $payments->verifyTransaction($payment);
+            $status = $payments->synchronize($order, $payment, $transaction);
 
-            // Verifikasi status ke Midtrans; callback browser tidak dijadikan sumber kebenaran.
-            $statusResponse = Transaction::status($payment->provider_order_id);
-            $statusData = json_decode(
-                json_encode($statusResponse, JSON_THROW_ON_ERROR),
-                true,
-                flags: JSON_THROW_ON_ERROR
-            );
-
-            if (! is_array($statusData)) {
-                throw new \UnexpectedValueException('Midtrans returned an invalid transaction status.');
-            }
-
-            if (
-                ($statusData['order_id'] ?? null) !== $payment->provider_order_id
-                || ! is_numeric($statusData['gross_amount'] ?? null)
-                || (int) round((float) $statusData['gross_amount']) !== (int) round((float) $payment->amount)
-            ) {
-                return response()->json([
-                    'message' => 'Midtrans transaction details do not match this order.',
-                ], 422);
-            }
-
-            $transactionStatus = $statusData['transaction_status'] ?? null;
-            $fraudStatus = $statusData['fraud_status'] ?? null;
-            $isPaid = $transactionStatus === 'settlement'
-                || ($transactionStatus === 'capture' && $fraudStatus === 'accept');
-
-            if (! $isPaid) {
+            if ($status !== PaymentStatus::Success) {
                 return response()->json([
                     'message' => 'Midtrans has not confirmed a successful payment.',
-                    'data' => ['status' => $transactionStatus],
+                    'data' => [
+                        'status' => $status->value ?? ($transaction['transaction_status'] ?? null),
+                    ],
                 ], 409);
             }
-
-            // Simpan status pembayaran dan order secara atomik.
-            DB::transaction(function () use ($order, $payment, $statusData, $transactionStatus, $fraudStatus) {
-                $lockedPayment = Payment::query()
-                    ->whereKey($payment->id)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-                $lockedOrder = Order::query()
-                    ->whereKey($order->id)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-
-                if ($lockedPayment->status === PaymentStatus::Success) {
-                    return;
-                }
-
-                $lockedPayment->update([
-                    'status' => PaymentStatus::Success,
-                    'transaction_id' => $statusData['transaction_id'] ?? null,
-                    'method' => $statusData['payment_type'] ?? null,
-                    'transaction_status' => $transactionStatus,
-                    'fraud_status' => $fraudStatus,
-                    'paid_at' => now(),
-                ]);
-                if ($lockedOrder->status === OrderStatus::PendingPayment) {
-                    $lockedOrder->update([
-                        'status' => OrderStatus::Processing,
-                    ]);
-                }
-            });
 
             return response()->json([
                 'message' => 'Payment confirmed successfully.',
@@ -451,6 +411,10 @@ class CheckoutController extends Controller
         }
     }
 
+    /**
+     * Menampilkan halaman untuk melanjutkan pembayaran pada order milik pengguna aktif,
+     * termasuk token Snap dan status pembayaran terakhir yang tersimpan.
+     */
     public function pendingPayment(string $orderNumber)
     {
         $order = Order::query()
@@ -472,7 +436,59 @@ class CheckoutController extends Controller
         ]);
     }
 
-    public function cancelPayment(string $orderNumber): JsonResponse
+    /**
+     * Menangani redirect selesai dari Midtrans. Parameter URL hanya dipakai untuk mencari
+     * order milik pengguna; statusnya tetap diverifikasi ke Midtrans sebelum ditampilkan.
+     */
+    public function finish(Request $request, MidtransPaymentService $payments): InertiaResponse
+    {
+        $orderNumber = $request->query('order_id');
+
+        if (
+            ! is_string($orderNumber)
+            || strlen($orderNumber) > 50
+            || preg_match('/^[A-Za-z0-9-]+$/', $orderNumber) !== 1
+        ) {
+            return Inertia::render('payment/finish', [
+                'result' => $this->unknownPaymentResult(),
+            ]);
+        }
+
+        $order = Order::query()
+            ->where('order_number', $orderNumber)
+            ->where('user_id', Auth::id())
+            ->with('payment')
+            ->first();
+
+        if ($order === null || $order->payment === null) {
+            return Inertia::render('payment/finish', [
+                'result' => $this->unknownPaymentResult(),
+            ]);
+        }
+
+        $payment = $order->payment;
+        $verified = false;
+
+        try {
+            // Status di URL berasal dari browser; hasil Midtrans diambil ulang di server.
+            $transaction = $payments->verifyTransaction($payment);
+            $synchronizedStatus = $payments->synchronize($order, $payment, $transaction);
+            $payment->refresh();
+            $verified = $synchronizedStatus !== null;
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+
+        return Inertia::render('payment/finish', [
+            'result' => $this->paymentResult($order, $payment, $verified),
+        ]);
+    }
+
+    /**
+     * Membatalkan transaksi pending setelah memastikan status terbaru ke Midtrans.
+     * Jika pembayaran ternyata sudah berhasil, order dipertahankan dan tidak dibatalkan.
+     */
+    public function cancelPayment(string $orderNumber, MidtransPaymentService $payments): JsonResponse
     {
         $order = Order::query()
             ->where('order_number', $orderNumber)
@@ -500,13 +516,10 @@ class CheckoutController extends Controller
         }
 
         try {
-            Config::$serverKey = config('services.midtrans.server_key');
-            Config::$isProduction = config('services.midtrans.is_production');
+            $transaction = $payments->verifyTransaction($payment);
 
-            $transaction = $this->getVerifiedMidtransStatus($payment);
-
-            if ($this->isPaidTransaction($transaction)) {
-                $this->markPaymentSuccessful($order, $payment, $transaction);
+            if ($payments->isPaidTransaction($transaction)) {
+                $payments->synchronize($order, $payment, $transaction);
 
                 return response()->json([
                     'message' => 'Pembayaran sudah berhasil. Pesanan tidak dibatalkan.',
@@ -514,13 +527,14 @@ class CheckoutController extends Controller
                 ], 409);
             }
 
-            if (! in_array($transaction['transaction_status'] ?? null, ['cancel', 'expire', 'deny'], true)) {
+            if (! in_array($transaction['transaction_status'] ?? null, ['cancel', 'expire', 'deny', 'failure'], true)) {
+                // Permintaan cancel belum membuktikan transaksi batal; cek statusnya lagi.
                 Transaction::cancel($payment->provider_order_id);
-                $transaction = $this->getVerifiedMidtransStatus($payment);
+                $transaction = $payments->verifyTransaction($payment);
             }
 
-            if ($this->isPaidTransaction($transaction)) {
-                $this->markPaymentSuccessful($order, $payment, $transaction);
+            if ($payments->isPaidTransaction($transaction)) {
+                $payments->synchronize($order, $payment, $transaction);
 
                 return response()->json([
                     'message' => 'Pembayaran sudah berhasil. Pesanan tidak dibatalkan.',
@@ -529,45 +543,19 @@ class CheckoutController extends Controller
             }
 
             $transactionStatus = $transaction['transaction_status'] ?? null;
-            if (! in_array($transactionStatus, ['cancel', 'expire', 'deny'], true)) {
+            if (! in_array($transactionStatus, ['cancel', 'expire', 'deny', 'failure'], true)) {
                 return response()->json([
                     'message' => 'Midtrans belum mengonfirmasi pembatalan. Silakan coba lagi.',
                 ], 502);
             }
 
-            $paymentStatus = match ($transactionStatus) {
-                'expire' => PaymentStatus::Expired,
-                'deny' => PaymentStatus::Failed,
-                default => PaymentStatus::Canceled,
-            };
-
-            DB::transaction(function () use ($order, $payment, $paymentStatus, $transaction) {
-                $lockedPayment = Payment::query()
-                    ->whereKey($payment->id)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-                $lockedOrder = Order::query()
-                    ->whereKey($order->id)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-
-                if ($lockedPayment->status === PaymentStatus::Success) {
-                    return;
-                }
-
-                $lockedPayment->update([
-                    'status' => $paymentStatus,
-                    'transaction_status' => $transaction['transaction_status'],
-                    'fraud_status' => $transaction['fraud_status'] ?? null,
-                ]);
-                if ($lockedOrder->status === OrderStatus::PendingPayment) {
-                    $lockedOrder->update(['status' => OrderStatus::Canceled]);
-                }
-            });
+            $paymentStatus = $payments->synchronize($order, $payment, $transaction);
 
             return response()->json([
-                'message' => 'Transaksi berhasil dibatalkan.',
-                'status' => $paymentStatus->value,
+                'message' => $paymentStatus === PaymentStatus::Canceled
+                    ? 'Transaksi berhasil dibatalkan.'
+                    : 'Status pembayaran telah diperbarui.',
+                'status' => $paymentStatus->value ?? $transactionStatus,
             ]);
         } catch (Throwable $e) {
             report($e);
@@ -578,63 +566,48 @@ class CheckoutController extends Controller
         }
     }
 
-    private function getVerifiedMidtransStatus(Payment $payment): array
+    /**
+     * @return array<string, mixed>
+     */
+    private function paymentResult(Order $order, Payment $payment, bool $verified): array
     {
-        $response = Transaction::status($payment->provider_order_id);
-        $data = json_decode(
-            json_encode($response, JSON_THROW_ON_ERROR),
-            true,
-            flags: JSON_THROW_ON_ERROR
-        );
+        $status = ! $verified && $payment->status !== PaymentStatus::Success
+            ? 'unknown'
+            : $payment->status->value;
 
-        if (
-            ! is_array($data)
-            || ($data['order_id'] ?? null) !== $payment->provider_order_id
-            || ! is_numeric($data['gross_amount'] ?? null)
-            || (int) round((float) $data['gross_amount']) !== (int) round((float) $payment->amount)
-        ) {
-            throw new \UnexpectedValueException('Midtrans transaction details do not match this order.');
-        }
-
-        return $data;
+        return [
+            'order_id' => $order->order_number,
+            'status' => $status,
+            'status_label' => match ($status) {
+                'success' => 'Pembayaran berhasil',
+                'pending' => 'Menunggu pembayaran',
+                'failed' => 'Pembayaran gagal',
+                'canceled' => 'Pembayaran dibatalkan',
+                'expired' => 'Pembayaran kedaluwarsa',
+                default => 'Status pembayaran sedang diperiksa',
+            },
+            'amount' => (float) $payment->amount,
+            'payment_method' => $payment->method,
+            'paid_at' => $payment->paid_at?->toISOString(),
+            'order_url' => $payment->status === PaymentStatus::Pending
+                ? '/checkout/payment/'.rawurlencode($order->order_number)
+                : '/profile#orders',
+        ];
     }
 
-    private function isPaidTransaction(array $transaction): bool
+    /**
+     * @return array<string, mixed>
+     */
+    private function unknownPaymentResult(): array
     {
-        return ($transaction['transaction_status'] ?? null) === 'settlement'
-            || (
-                ($transaction['transaction_status'] ?? null) === 'capture'
-                && ($transaction['fraud_status'] ?? null) === 'accept'
-            );
-    }
-
-    private function markPaymentSuccessful(Order $order, Payment $payment, array $transaction): void
-    {
-        DB::transaction(function () use ($order, $payment, $transaction) {
-            $lockedPayment = Payment::query()
-                ->whereKey($payment->id)
-                ->lockForUpdate()
-                ->firstOrFail();
-            $lockedOrder = Order::query()
-                ->whereKey($order->id)
-                ->lockForUpdate()
-                ->firstOrFail();
-
-            if ($lockedPayment->status === PaymentStatus::Success) {
-                return;
-            }
-
-            $lockedPayment->update([
-                'status' => PaymentStatus::Success,
-                'transaction_id' => $transaction['transaction_id'] ?? null,
-                'method' => $transaction['payment_type'] ?? null,
-                'transaction_status' => $transaction['transaction_status'],
-                'fraud_status' => $transaction['fraud_status'] ?? null,
-                'paid_at' => now(),
-            ]);
-            if ($lockedOrder->status === OrderStatus::PendingPayment) {
-                $lockedOrder->update(['status' => OrderStatus::Processing]);
-            }
-        });
+        return [
+            'order_id' => null,
+            'status' => 'unknown',
+            'status_label' => 'Status pembayaran sedang diperiksa',
+            'amount' => null,
+            'payment_method' => null,
+            'paid_at' => null,
+            'order_url' => null,
+        ];
     }
 }

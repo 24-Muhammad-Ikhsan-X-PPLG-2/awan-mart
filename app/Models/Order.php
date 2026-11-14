@@ -10,15 +10,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Override;
 
-enum OrderStatus: string
-{
-    case PendingPayment = 'pending_payment';
-    case Processing = 'processing';
-    case Shipped = 'shipped';
-    case Completed = 'completed';
-    case Canceled = 'canceled';
-}
-
 /**
  * @property int $id
  * @property string $order_number

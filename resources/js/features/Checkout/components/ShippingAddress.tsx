@@ -63,28 +63,6 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
         };
     }, [isModalOpen, isSubmitting]);
 
-    // const handleChange = (field: keyof AddressForm, value: string) => {
-    //     setForm((current) => ({
-    //         ...current,
-    //         [field]: value,
-    //     }));
-    // };
-
-    // const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    //     event.preventDefault();
-
-    //     if (!onAddAddress) return;
-
-    //     setIsSubmitting(true);
-
-    //     try {
-    //         await onAddAddress(form as Omit<Address, "id">);
-    //         setForm(initialForm);
-    //         setIsModalOpen(false);
-    //     } finally {
-    //         setIsSubmitting(false);
-    //     }
-    // };
     const handleSubmitAddress: SubmitHandler<TypeFormAddress> = async (
         dataForm,
     ) => {

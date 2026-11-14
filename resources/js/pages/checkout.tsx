@@ -127,7 +127,9 @@ const CheckoutPage = ({
                             );
                         }
 
-                        router.reload();
+                        router.visit(
+                            `/checkout/payment/${encodeURIComponent(orderNumber)}`,
+                        );
                     } catch (error) {
                         setCheckoutError(
                             error instanceof Error

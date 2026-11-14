@@ -32,6 +32,9 @@ enum UserRole: string
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read Pelanggan|null $pelanggan
+ * @property-read Admin|null $admin
+ * @property-read Supplier|null $supplier
  */
 #[Fillable([
     'name',
@@ -57,29 +60,41 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'role' => UserRole::class
+            'role' => UserRole::class,
         ];
     }
+
+    /** @return HasMany<Product, $this> */
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
     }
+
+    /** @return HasMany<Order, $this> */
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
     }
+
+    /** @return HasOne<Cart, $this> */
     public function cart(): HasOne
     {
         return $this->hasOne(Cart::class);
     }
+
+    /** @return HasOne<Pelanggan, $this> */
     public function pelanggan(): HasOne
     {
         return $this->hasOne(Pelanggan::class);
     }
+
+    /** @return HasOne<Admin, $this> */
     public function admin(): HasOne
     {
         return $this->hasOne(Admin::class);
     }
+
+    /** @return HasOne<Supplier, $this> */
     public function supplier(): HasOne
     {
         return $this->hasOne(Supplier::class);

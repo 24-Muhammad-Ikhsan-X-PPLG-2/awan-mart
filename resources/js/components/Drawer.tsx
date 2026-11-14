@@ -1,19 +1,26 @@
 import { AnimatePresence } from "motion/react";
 import { FC } from "react";
 import { motion } from "motion/react";
-import { ArrowRight, UserRound, X } from "lucide-react";
+import { ArrowRight, LayoutGridCircles, UserRound, X } from "lucide-react";
 import SearchInput from "./SearchInput";
 import MobileNav from "./MobileNav";
-import { categories } from "@/constant";
 import { Link, usePage } from "@inertiajs/react";
+import { Category } from "@/types/types";
+import { iconMap } from "@/constant";
 
 type Props = {
     isDrawerOpen: boolean;
     setIsDrawerOpen: (v: boolean) => void;
     activePage?: string;
+    categories: Category[] | null;
 };
 
-const Drawer: FC<Props> = ({ isDrawerOpen, setIsDrawerOpen, activePage }) => {
+const Drawer: FC<Props> = ({
+    isDrawerOpen,
+    setIsDrawerOpen,
+    activePage,
+    categories,
+}) => {
     const {
         auth: { user },
     } = usePage().props;
@@ -81,24 +88,11 @@ const Drawer: FC<Props> = ({ isDrawerOpen, setIsDrawerOpen, activePage }) => {
                                 </p>
 
                                 <div className="grid grid-cols-2 gap-2">
-                                    {categories.map(({ name, href, Icon }) => (
-                                        <Link
-                                            key={name}
-                                            href={href}
-                                            onClick={() =>
-                                                setIsDrawerOpen(false)
-                                            }
-                                            className="group flex items-center gap-2.5 rounded-lg border border-[#E8EBF0] p-3 transition-all hover:border-[#203452] hover:bg-[#F8F9FB]"
-                                        >
-                                            <Icon
-                                                size={17}
-                                                strokeWidth={1.7}
-                                                className="shrink-0 text-[#667085] transition-colors group-hover:text-[#203452]"
-                                            />
-                                            <span className="text-[11px] font-medium text-[#475467] transition-colors group-hover:text-[#203452]">
-                                                {name}
-                                            </span>
-                                        </Link>
+                                    {categories?.map((category) => (
+                                        <RenderCategory
+                                            setIsDrawerOpen={setIsDrawerOpen}
+                                            category={category}
+                                        />
                                     ))}
                                 </div>
                             </div>
@@ -142,6 +136,37 @@ const Drawer: FC<Props> = ({ isDrawerOpen, setIsDrawerOpen, activePage }) => {
                 </>
             )}
         </AnimatePresence>
+    );
+};
+
+type PropsRenderCategory = {
+    category: Category;
+    setIsDrawerOpen: (v: boolean) => void;
+};
+
+const RenderCategory: FC<PropsRenderCategory> = ({
+    category,
+    setIsDrawerOpen,
+}) => {
+    const Icon = category.icon
+        ? (iconMap[category.icon] ?? LayoutGridCircles)
+        : LayoutGridCircles;
+    return (
+        <Link
+            key={category.name}
+            href={`/categories/${category.name}`}
+            onClick={() => setIsDrawerOpen(false)}
+            className="group flex items-center gap-2.5 rounded-lg border border-[#E8EBF0] p-3 transition-all hover:border-[#203452] hover:bg-[#F8F9FB]"
+        >
+            <Icon
+                size={17}
+                strokeWidth={1.7}
+                className="shrink-0 text-[#667085] transition-colors group-hover:text-[#203452]"
+            />
+            <span className="text-[11px] font-medium text-[#475467] transition-colors group-hover:text-[#203452]">
+                {category.name}
+            </span>
+        </Link>
     );
 };
 

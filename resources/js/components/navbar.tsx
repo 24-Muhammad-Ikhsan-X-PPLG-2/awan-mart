@@ -8,13 +8,13 @@ import {
 } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { appName, categories } from "@/constant";
+import { appName } from "@/constant";
 import RenderNavLink from "./RenderNavLink";
-import MobileNav from "./MobileNav";
 import SearchInput from "./SearchInput";
 import { Link, usePage } from "@inertiajs/react";
 import Drawer from "./Drawer";
 import { useCartStore } from "@/stores/cart-store";
+import { useCategories } from "@/stores/categories-store";
 
 type Props = {
     activePage?: string;
@@ -23,6 +23,7 @@ type Props = {
 const Navbar: FC<Props> = ({ activePage }) => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const { cartCount, setCartCount } = useCartStore();
+    const { categories, setCategories } = useCategories();
     const {
         auth: { user },
     } = usePage().props;
@@ -31,8 +32,21 @@ const Navbar: FC<Props> = ({ activePage }) => {
         (async () => {
             const res = await fetch("/cart/count");
             const data = await res.json();
+            const csrfToken = document.querySelector<HTMLMetaElement>(
+                'meta[name="csrf-token"]',
+            )?.content;
+            const response = await fetch("/categories/get", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    "X-CSRF-TOKEN": csrfToken ?? "",
+                },
+            });
+            const dataCategories = await response.json();
             if (mounted) {
                 setCartCount(data);
+                setCategories(dataCategories.categories);
             }
         })();
         return () => {
@@ -50,7 +64,10 @@ const Navbar: FC<Props> = ({ activePage }) => {
                         </h1>
                     </Link>
                     <div className="hidden lg:block">
-                        <RenderNavLink activePage={activePage} />
+                        <RenderNavLink
+                            categories={categories}
+                            activePage={activePage}
+                        />
                     </div>
 
                     <div className="hidden items-center gap-3 sm:gap-5 lg:flex">
@@ -151,6 +168,7 @@ const Navbar: FC<Props> = ({ activePage }) => {
                 isDrawerOpen={isDrawerOpen}
                 setIsDrawerOpen={setIsDrawerOpen}
                 activePage={activePage}
+                categories={categories}
             />
         </>
     );

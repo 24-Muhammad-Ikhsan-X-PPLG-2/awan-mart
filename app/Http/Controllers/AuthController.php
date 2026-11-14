@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Pelanggan;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -79,6 +80,9 @@ class AuthController extends Controller
         Pelanggan::query()->create([
             'user_id' => $user->id,
             'name' => $dataForm['name'],
+        ]);
+        Cart::query()->create([
+            'user_id' => $user->id,
         ]);
         return redirect()->to('/auth/login')->with('success', 'Sukses daftar, silahkan login.');
     }

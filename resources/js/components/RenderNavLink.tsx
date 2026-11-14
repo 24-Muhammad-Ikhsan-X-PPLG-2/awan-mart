@@ -1,14 +1,16 @@
-import { navlinks, categories } from "@/constant";
+import { iconMap, navlinks } from "@/constant";
+import { Category } from "@/types/types";
 import { Link } from "@inertiajs/react";
-import { ChevronDown, ArrowRight } from "lucide-react";
+import { ChevronDown, ArrowRight, LayoutGridCircles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { FC, useState } from "react";
 
 type Props = {
     activePage?: string;
+    categories: Category[] | null;
 };
 
-const RenderNavLink: FC<Props> = ({ activePage = "beranda" }) => {
+const RenderNavLink: FC<Props> = ({ activePage = "beranda", categories }) => {
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
     return (
@@ -32,8 +34,8 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda" }) => {
                                 onClick={() =>
                                     setIsCategoryOpen((prev) => !prev)
                                 }
-                                className={`group relative flex h-full items-center gap-1.5 text-[13px] tracking-wide font-medium transition-colors ${
-                                    isCategoryOpen
+                                className={`group relative flex h-full items-center gap-1.5 text-[13px] font-medium tracking-wide transition-colors ${
+                                    isCategoryOpen || isActive
                                         ? "text-[#203452]"
                                         : "text-[#667085] hover:text-[#203452]"
                                 }`}
@@ -50,7 +52,7 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda" }) => {
 
                                 <span
                                     className={`absolute bottom-0 left-0 h-0.5 w-full origin-left bg-[#203452] transition-transform duration-300 ${
-                                        isCategoryOpen
+                                        isCategoryOpen || isActive
                                             ? "scale-x-100"
                                             : "scale-x-0"
                                     }`}
@@ -79,7 +81,7 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda" }) => {
                                             duration: 0.22,
                                             ease: [0.22, 1, 0.36, 1],
                                         }}
-                                        className="absolute left-1/2 top-full z-50 w-130 -translate-x-1/2 rounded-xl border border-[#E8EBF0] bg-white p-5 shadow-[0_16px_50px_rgba(32,52,82,0.12)]"
+                                        className="absolute top-full left-1/2 z-50 w-130 -translate-x-1/2 rounded-xl border border-[#E8EBF0] bg-white p-5 shadow-[0_16px_50px_rgba(32,52,82,0.12)]"
                                     >
                                         <div className="mb-4 flex items-center justify-between">
                                             <div>
@@ -102,33 +104,11 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda" }) => {
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-2">
-                                            {categories.map(
-                                                ({ name, href, Icon }) => (
-                                                    <Link
-                                                        key={name}
-                                                        href={href}
-                                                        className="group flex items-center gap-3 rounded-lg border border-transparent p-3 transition-all duration-200 hover:border-[#E8EBF0] hover:bg-[#F8F9FB]"
-                                                    >
-                                                        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F1F3F7] text-[#203452] transition-colors group-hover:bg-[#203452] group-hover:text-white">
-                                                            <Icon
-                                                                size={19}
-                                                                strokeWidth={
-                                                                    1.7
-                                                                }
-                                                            />
-                                                        </div>
-
-                                                        <div className="min-w-0">
-                                                            <p className="text-[13px] font-semibold text-[#203452]">
-                                                                {name}
-                                                            </p>
-                                                            <p className="mt-0.5 text-[10px] text-[#98A2B3]">
-                                                                Lihat produk
-                                                            </p>
-                                                        </div>
-                                                    </Link>
-                                                ),
-                                            )}
+                                            {categories?.map((category) => (
+                                                <RenderCategory
+                                                    category={category}
+                                                />
+                                            ))}
                                         </div>
                                     </motion.div>
                                 )}
@@ -160,6 +140,36 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda" }) => {
                 );
             })}
         </div>
+    );
+};
+
+type PropsCategoryRender = {
+    category: Category;
+};
+
+const RenderCategory: FC<PropsCategoryRender> = ({ category }) => {
+    const Icon = category.icon
+        ? (iconMap[category.icon] ?? LayoutGridCircles)
+        : LayoutGridCircles;
+    return (
+        <Link
+            key={category.name}
+            href={`/products?category=${category.id}`}
+            className="group flex items-center gap-3 rounded-lg border border-transparent p-3 transition-all duration-200 hover:border-[#E8EBF0] hover:bg-[#F8F9FB]"
+        >
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#F1F3F7] text-[#203452] transition-colors group-hover:bg-[#203452] group-hover:text-white">
+                <Icon size={19} strokeWidth={1.7} />
+            </div>
+
+            <div className="min-w-0">
+                <p className="text-[13px] font-semibold text-[#203452]">
+                    {category.name}
+                </p>
+                <p className="mt-0.5 text-[10px] text-[#98A2B3]">
+                    Lihat produk
+                </p>
+            </div>
+        </Link>
     );
 };
 

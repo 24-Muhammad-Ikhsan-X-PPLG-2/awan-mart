@@ -31,15 +31,15 @@ class ProductsController extends Controller
             })
             ->when(
                 $filters['category'] ?? null,
-                fn ($query, $categoryId) => $query->where('category_id', $categoryId)
+                fn($query, $categoryId) => $query->where('category_id', $categoryId)
             )
             ->when(
                 $filters['min_price'] ?? null,
-                fn ($query, $minPrice) => $query->where('price', '>=', $minPrice)
+                fn($query, $minPrice) => $query->where('price', '>=', $minPrice)
             )
             ->when(
                 $filters['max_price'] ?? null,
-                fn ($query, $maxPrice) => $query->where('price', '<=', $maxPrice)
+                fn($query, $maxPrice) => $query->where('price', '<=', $maxPrice)
             );
 
         match ($filters['sort'] ?? 'latest') {
@@ -64,5 +64,26 @@ class ProductsController extends Controller
                 'sort' => $filters['sort'] ?? 'latest',
             ],
         ]);
+    }
+    public function search(Request $req)
+    {
+        $keyword = $req->string('keyword')->trim()->toString();
+
+        if (mb_strlen($keyword) < 2) {
+            return response()->json([]);
+        }
+
+        $proudcts = Product::query()->with(['category', 'product_images'])->where('name', 'like', "%{$keyword}%")->orWhereHas('category', function ($query) use ($keyword) {
+            $query->where('name', 'like', "%{$keyword}%");
+        })->limit(5)->get();
+
+        return response()->json($proudcts->map(fn($product) => [
+            'id' => $product->id,
+            'name' => $product->name,
+            'slug' => $product->slug,
+            'price' => $product->price,
+            'image' => $product->product_images->first()?->image,
+            'category' => $product->category?->name
+        ]));
     }
 }

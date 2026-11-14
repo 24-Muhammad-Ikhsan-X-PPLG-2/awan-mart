@@ -1,8 +1,8 @@
-import { iconMap } from "@/constant";
-import { Category } from "@/types/types";
-import { Link } from "@inertiajs/react";
-import { ArrowRight, Laptop, LayoutGridCircles } from "lucide-react";
-import { FC } from "react";
+import { iconMap } from '@/constant';
+import { Category } from '@/types/types';
+import { Link } from '@inertiajs/react';
+import { ArrowRight, LayoutGridCircles } from 'lucide-react';
+import { FC } from 'react';
 
 type Props = {
     categories: Category[] | null;
@@ -21,7 +21,7 @@ const CategoriesSection: FC<Props> = ({ categories }) => {
                         KATEGORI
                     </p>
 
-                    <h2 className="mt-2 font-playfair text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl">
+                    <h2 className="font-playfair mt-2 text-2xl leading-tight font-bold sm:text-3xl lg:text-4xl">
                         Belanja Berdasarkan Kategori
                     </h2>
                 </div>
@@ -59,7 +59,7 @@ const CategoryRender: FC<PropsCategoryRender> = ({ category }) => {
         : LayoutGridCircles;
     return (
         <Link
-            href={`/categories/${category.name.toLowerCase()}`}
+            href={`/products?category=${category.id}`}
             className="group flex h-36 w-36 shrink-0 flex-col items-center justify-center gap-3 rounded-xl border border-[#E2E6ED] bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#526B91]/40 hover:shadow-lg sm:h-40 sm:w-44 lg:h-44 lg:w-52"
         >
             <Icon
