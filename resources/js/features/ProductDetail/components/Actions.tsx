@@ -2,7 +2,7 @@ import { FC, useEffect, useRef, useState } from "react";
 import { ProductType } from "@/types/types";
 import { Check, Heart, LoaderCircle, ShoppingCart } from "lucide-react";
 import { router } from "@inertiajs/react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { useCartStore } from "@/stores/cart-store";
 
 type Props = {
