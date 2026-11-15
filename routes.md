@@ -72,7 +72,10 @@ Prefix: `/admin`
 
 ### Dashboard
 
-- `GET /admin/dashboard` — Menampilkan dashboard admin.
+- `GET /admin` — Menampilkan dashboard admin (`admin.dashboard`).
+- `GET /admin/orders` — Menampilkan dan memfilter pesanan (`admin.orders.index`).
+- `GET /admin/orders/{order}` — Menampilkan detail pesanan (`admin.orders.show`).
+- `PATCH /admin/orders/{order}/status` — Memperbarui status pesanan yang diizinkan (`admin.orders.update-status`).
 
 ### Products Management
 

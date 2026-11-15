@@ -11,23 +11,25 @@ use Override;
  * @property int $id
  * @property int $user_id
  * @property string $name
- * @property array|null $alamat
+ * @property array<string, mixed>|null $alamat
  * @property string|null $telp
  */
 #[Fillable(['alamat', 'user_id', 'name', 'telp'])]
 class Pelanggan extends Model
 {
     protected $table = 'pelanggan';
+
     public $timestamps = false;
 
     #[Override]
     protected function casts()
     {
         return [
-            'alamat' => 'array'
+            'alamat' => 'array',
         ];
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

@@ -33,18 +33,23 @@ class Procurement extends Model
     protected function casts()
     {
         return [
-            'tanggal_pengadaan' => 'datetime'
+            'tanggal_pengadaan' => 'datetime',
         ];
     }
 
+    /** @return BelongsTo<Supplier, $this> */
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
     }
+
+    /** @return BelongsTo<Admin, $this> */
     public function admin(): BelongsTo
     {
         return $this->belongsTo(Admin::class);
     }
+
+    /** @return HasMany<ProcurementItem, $this> */
     public function procurement_items(): HasMany
     {
         return $this->hasMany(ProcurementItem::class);

@@ -5,11 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Carbon;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Override;
-use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -28,25 +26,34 @@ use Illuminate\Support\Str;
 class Product extends Model
 {
     protected $table = 'products';
+
     #[Override]
     protected function casts()
     {
         return [
-            'price' => 'decimal:2'
+            'price' => 'decimal:2',
         ];
     }
+
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
+
+    /** @return BelongsTo<Category, $this> */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
+
+    /** @return HasMany<OrderItem, $this> */
     public function order_items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    /** @return HasMany<ProductImage, $this> */
     public function product_images(): HasMany
     {
         return $this->hasMany(ProductImage::class);

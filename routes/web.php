@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MidtransNotificationController;
 use App\Http\Controllers\ProductsController;
@@ -51,6 +53,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/user/address', [UserController::class, 'address']);
     Route::get('/profile', [UserController::class, 'profile']);
     Route::put('/profile', [UserController::class, 'updateProfile']);
+
+    Route::prefix('admin')->middleware('role:admin')->group(function () {
+        Route::get('/', DashboardController::class)->name('admin.dashboard');
+        Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
+        Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('admin.orders.show');
+        Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])
+            ->name('admin.orders.update-status');
+    });
 });
 // Detail Product
 Route::get('/products/{product:slug}', [HomeController::class, 'product']);
