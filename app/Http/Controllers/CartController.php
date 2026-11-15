@@ -71,6 +71,10 @@ class CartController extends Controller
                 return redirect()->to('/auth/login');
             }
 
+            if (!$user->cart) {
+                return "0";
+            }
+
             $count = $user->cart->cart_items()->sum('quantity');
 
             return $count > 99 ? '99+' : (string) $count;

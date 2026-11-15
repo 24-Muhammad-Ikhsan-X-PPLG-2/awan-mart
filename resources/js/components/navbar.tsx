@@ -29,12 +29,12 @@ const Navbar: FC<Props> = ({ activePage }) => {
     } = usePage().props;
     useEffect(() => {
         let mounted = true;
+        const csrfToken = document.querySelector<HTMLMetaElement>(
+            'meta[name="csrf-token"]',
+        )?.content;
         (async () => {
             const res = await fetch("/cart/count");
             const data = await res.json();
-            const csrfToken = document.querySelector<HTMLMetaElement>(
-                'meta[name="csrf-token"]',
-            )?.content;
             const response = await fetch("/categories/get", {
                 method: "GET",
                 headers: {
@@ -46,7 +46,6 @@ const Navbar: FC<Props> = ({ activePage }) => {
             const dataCategories = await response.json();
             if (mounted) {
                 setCartCount(data);
-                console.log(dataCategories);
                 setCategories(dataCategories.categories);
             }
         })();
