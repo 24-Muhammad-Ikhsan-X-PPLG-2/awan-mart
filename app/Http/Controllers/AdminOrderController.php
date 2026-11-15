@@ -14,10 +14,20 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * Controller untuk monitoring dan update order dari sisi admin.
+ *
+ * Fokus utamanya adalah menampilkan daftar order, detail item, dan mengizinkan
+ * transisi status yang valid seperti processing -> shipped.
+ */
 class AdminOrderController extends Controller
 {
+    /**
+     * Menampilkan daftar order admin dengan filter search dan status.
+     */
     public function index(Request $request): Response
     {
+        // Validasi filter yang masuk dari query string.
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
             'status' => ['nullable', 'string', Rule::in(
@@ -26,11 +36,15 @@ class AdminOrderController extends Controller
         ]);
         $search = trim($filters['search'] ?? '');
         $status = $filters['status'] ?? null;
+
+        // Hitung jumlah per status agar badge/filter summary bisa ditampilkan.
         $statusCounts = Order::query()
             ->select('status')
             ->selectRaw('COUNT(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');
+
+        // Agregat ringkas untuk stat card utama: total, diproses, dikirim, selesai.
         $aggregate = DB::table('orders')
             ->selectRaw(
                 'COUNT(*) as total, '.
@@ -97,6 +111,9 @@ class AdminOrderController extends Controller
         ]);
     }
 
+    /**
+     * Menampilkan detail order lengkap untuk admin, termasuk item, customer, dan summary payment.
+     */
     public function show(Request $request, Order $order): Response
     {
         $order->load([
@@ -105,6 +122,7 @@ class AdminOrderController extends Controller
             'orderItems.product.product_images',
         ]);
 
+        // Transform item ke format yang mudah dipakai frontend: nama produk, qty, harga, subtotal.
         $items = $order->orderItems
             ->map(fn (OrderItem $item): array => [
                 'id' => $item->id,
@@ -157,6 +175,11 @@ class AdminOrderController extends Controller
         ]);
     }
 
+    /**
+     * Mengizinkan transisi status order yang sah: diproses -> dikirim.
+     *
+     * Logika validasi tetap dijalankan di backend, bukan hanya di frontend.
+     */
     public function updateStatus(Request $request, Order $order): RedirectResponse
     {
         $validated = $request->validate([
@@ -164,6 +187,7 @@ class AdminOrderController extends Controller
         ]);
 
         DB::transaction(function () use ($order, $validated): void {
+            // Kunci baris order agar tidak terjadi dua admin mengubah status secara bersamaan.
             $lockedOrder = Order::query()
                 ->lockForUpdate()
                 ->findOrFail($order->id);
@@ -180,6 +204,9 @@ class AdminOrderController extends Controller
         return back()->with('success', 'Pesanan berhasil ditandai sebagai dikirim.');
     }
 
+    /**
+     * Mengubah enum order status menjadi label yang lebih manusiawi.
+     */
     private function orderStatusLabel(OrderStatus $status): string
     {
         return match ($status) {
@@ -191,6 +218,9 @@ class AdminOrderController extends Controller
         };
     }
 
+    /**
+     * Mengubah enum payment status menjadi label yang lebih manusiawi.
+     */
     private function paymentStatusLabel(PaymentStatus $status): string
     {
         return match ($status) {

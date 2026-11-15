@@ -19,8 +19,14 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
+/**
+ * Controller yang mengelola profil user, alamat, dan riwayat order terkait user.
+ */
 class UserController extends Controller
 {
+    /**
+     * Menyimpan/ubah alamat pengiriman pelanggan dari request AJAX.
+     */
     public function address(Request $req): JsonResponse
     {
         try {
@@ -32,8 +38,10 @@ class UserController extends Controller
                 'province' => ['required', 'string', 'max:100'],
                 'postal_code' => ['required', 'string', 'max:10'],
             ]);
+
             $user = Auth::user();
             if ($user->role->value === 'pelanggan') {
+                // Field alamat pada tabel pelanggan disimpan sebagai payload object.
                 Pelanggan::query()->where('user_id', '=', $user->id)->update([
                     'alamat' => $validated,
                 ]);
@@ -56,6 +64,9 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * Menampilkan halaman profil user dan daftar order yang sudah dibeli / difilter.
+     */
     public function profile(): InertiaResponse
     {
         /** @var User $user */
@@ -118,6 +129,9 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * Memperbarui data profile user, dengan pengecekan unique per tabel profil.
+     */
     public function updateProfile(Request $request): RedirectResponse
     {
         /** @var User $user */
@@ -153,6 +167,9 @@ class UserController extends Controller
         return back()->with('success', 'Profile updated successfully.');
     }
 
+    /**
+     * Mengembalikan record profil sesuai role user saat ini.
+     */
     private function profileRecord(User $user): Pelanggan|Admin|Supplier|null
     {
         return match ($user->role) {
@@ -162,6 +179,9 @@ class UserController extends Controller
         };
     }
 
+    /**
+     * Nama tabel profil yang dipakai untuk validasi unique berdasarkan role.
+     */
     private function profileTable(User $user): string
     {
         return match ($user->role) {

@@ -16,8 +16,18 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * Controller yang menangani portal supplier untuk melihat dan memproses procurement.
+ *
+ * Fokus utamanya adalah membatasi akses ke procurement milik supplier yang sedang login,
+ * lalu mengizinkan hanya transisi status yang valid seperti pending -> approved,
+ * approved -> shipped, dan reject jika diperlukan.
+ */
 class SupplierProcurementController extends Controller
 {
+    /**
+     * Menampilkan daftar procurement milik supplier yang sedang login.
+     */
     public function index(Request $request): Response
     {
         $filters = $request->validate([
@@ -96,6 +106,9 @@ class SupplierProcurementController extends Controller
         ]);
     }
 
+    /**
+     * Menampilkan detail procurement milik supplier termasuk item, ringkasan, dan aksi.
+     */
     public function show(Request $request, Procurement $procurement): Response
     {
         $supplier = $this->supplierFor($request->user());
@@ -138,6 +151,9 @@ class SupplierProcurementController extends Controller
         ]);
     }
 
+    /**
+     * Menerima permintaan procurement yang masih dalam status pending.
+     */
     public function accept(Request $request, Procurement $procurement): RedirectResponse
     {
         $this->transition(
@@ -150,6 +166,9 @@ class SupplierProcurementController extends Controller
         return back()->with('success', 'Permintaan pengadaan berhasil diterima.');
     }
 
+    /**
+     * Menolak procurement dengan alasan yang wajib diisi oleh supplier.
+     */
     public function reject(Request $request, Procurement $procurement): RedirectResponse
     {
         $reason = $request->input('reason');
@@ -172,6 +191,9 @@ class SupplierProcurementController extends Controller
         return back()->with('success', 'Permintaan pengadaan berhasil ditolak.');
     }
 
+    /**
+     * Mengonfirmasi bahwa barang telah dikirim dari supplier ke admin.
+     */
     public function ship(Request $request, Procurement $procurement): RedirectResponse
     {
         $this->transition(
@@ -184,6 +206,11 @@ class SupplierProcurementController extends Controller
         return back()->with('success', 'Konfirmasi pengiriman berhasil dicatat.');
     }
 
+    /**
+     * Melakukan perubahan status hanya jika status saat ini sesuai dengan ekspetasi.
+     *
+     * Logika ini dijaga di backend agar supplier tidak bisa memaksa status yang tidak legal.
+     */
     private function transition(
         Request $request,
         Procurement $procurement,
@@ -214,6 +241,9 @@ class SupplierProcurementController extends Controller
         });
     }
 
+    /**
+     * Mengambil supplier aktif dari user login dan memaksa 403 bila user bukan supplier.
+     */
     private function supplierFor(?User $user): Supplier
     {
         abort_if($user === null, 403);
@@ -221,6 +251,9 @@ class SupplierProcurementController extends Controller
         return $user->supplier()->firstOrFail();
     }
 
+    /**
+     * Mengambil procurement yang memang milik supplier login, bukan record supplier lain.
+     */
     private function ownedProcurement(Supplier $supplier, int $id): Procurement
     {
         return Procurement::query()
@@ -240,6 +273,9 @@ class SupplierProcurementController extends Controller
         ];
     }
 
+    /**
+     * Mengubah query search yang mungkin berupa nomor procurement menjadi ID integer.
+     */
     private function procurementIdFromSearch(string $search): ?int
     {
         if (preg_match('/^PG-0*(\d+)$/i', $search, $matches) === 1) {
@@ -249,6 +285,9 @@ class SupplierProcurementController extends Controller
         return ctype_digit($search) ? (int) $search : null;
     }
 
+    /**
+     * Membuat format nomor procurement yang konsisten untuk UI dan pencarian.
+     */
     private function procurementNumber(int $id): string
     {
         return 'PG-'.str_pad((string) $id, 6, '0', STR_PAD_LEFT);

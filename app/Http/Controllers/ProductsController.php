@@ -7,8 +7,17 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+/**
+ * Controller untuk katalog produk pelanggan.
+ */
 class ProductsController extends Controller
 {
+    /**
+     * Menampilkan daftar produk dengan filter dan pagination.
+     *
+     * Query dibangun secara dinamis berdasarkan search, kategori, rentang harga,
+     * dan sort order. Semua filter ini dipertahankan di URL via withQueryString().
+     */
     public function index(Request $request)
     {
         $filters = $request->validate([
@@ -65,6 +74,10 @@ class ProductsController extends Controller
             ],
         ]);
     }
+
+    /**
+     * Endpoint pencarian cepat produk untuk autocomplete di UI.
+     */
     public function search(Request $req)
     {
         $keyword = $req->string('keyword')->trim()->toString();
@@ -73,11 +86,17 @@ class ProductsController extends Controller
             return response()->json([]);
         }
 
-        $proudcts = Product::query()->with(['category', 'product_images'])->where('name', 'like', "%{$keyword}%")->orWhereHas('category', function ($query) use ($keyword) {
-            $query->where('name', 'like', "%{$keyword}%");
-        })->limit(5)->get();
+        // Search dilakukan di nama produk dan kategori agar user lebih mudah mencari.
+        $products = Product::query()
+            ->with(['category', 'product_images'])
+            ->where('name', 'like', "%{$keyword}%")
+            ->orWhereHas('category', function ($query) use ($keyword) {
+                $query->where('name', 'like', "%{$keyword}%");
+            })
+            ->limit(5)
+            ->get();
 
-        return response()->json($proudcts->map(fn($product) => [
+        return response()->json($products->map(fn($product) => [
             'id' => $product->id,
             'name' => $product->name,
             'slug' => $product->slug,

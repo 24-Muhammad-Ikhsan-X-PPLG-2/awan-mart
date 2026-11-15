@@ -19,14 +19,22 @@ use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * Controller dashboard admin yang menggabungkan statistik utama, grafik revenue,
+ * status order, stock, dan procurement dalam satu payload Inertia.
+ */
 class DashboardController extends Controller
 {
+    /**
+     * Mengumpulkan semua data dashboard sesuai rentang tanggal yang dipilih.
+     */
     public function __invoke(Request $request): Response
     {
         $range = $request->validate([
             'range' => ['sometimes', 'string', Rule::in(['7d', '30d', '12m'])],
         ])['range'] ?? '7d';
         $today = now()->startOfDay();
+        // Rentang tanggal dipakai untuk revenue trend dan filter analytics di UI.
         $from = match ($range) {
             '30d' => $today->copy()->subDays(29),
             '12m' => $today->copy()->startOfMonth()->subMonths(11),
@@ -34,6 +42,8 @@ class DashboardController extends Controller
         };
         $until = now()->endOfDay();
 
+        // Revenue hanya dihitung dari payment yang sudah berhasil dan memiliki paid_at,
+        // agar pending / failed tidak ikut menaikkan angka pendapatan.
         $revenueByDate = Payment::query()
             ->where('status', PaymentStatus::Success)
             ->whereNotNull('paid_at')
@@ -161,6 +171,8 @@ class DashboardController extends Controller
      */
     private function topProducts(): Collection
     {
+        // Top product dihitung dari order_items yang punya payment sukses agar hanya transaksi valid
+        // yang masuk ke peringkat produk terlaris.
         return Product::query()
             ->select(['products.id', 'products.name'])
             ->selectSub(
@@ -198,6 +210,9 @@ class DashboardController extends Controller
             });
     }
 
+    /**
+     * Mengubah enum status order menjadi label yang mudah dibaca di dashboard.
+     */
     private function orderStatusLabel(OrderStatus $status): string
     {
         return match ($status) {

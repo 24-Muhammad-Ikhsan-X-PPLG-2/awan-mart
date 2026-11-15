@@ -24,6 +24,12 @@ use Midtrans\Snap;
 use Midtrans\Transaction;
 use Throwable;
 
+/**
+ * Controller yang mengurus alur checkout dan pembayaran pelanggan.
+ *
+ * Di sini ada logika penting untuk validasi stok, pembuatan order, pemulihan order pending,
+ * pemanggilan Midtrans, dan sinkronisasi status pembayaran ke order lokal.
+ */
 class CheckoutController extends Controller
 {
     private const SHIPPING_COST = 15000;
@@ -167,7 +173,8 @@ class CheckoutController extends Controller
                         'name' => 'Ongkos Kirim',
                     ];
 
-                    // Gunakan kembali order pending dengan alamat dan item yang sama.
+                    // Jika user sudah punya order pending dengan barang dan total yang sama,
+                    // gunakan kembali order lama agar tidak membuat duplikasi transaksi.
                     $existingOrder = Order::query()
                         ->with(['payment', 'orderItems'])
                         ->where('user_id', $user->id)
@@ -313,7 +320,7 @@ class CheckoutController extends Controller
                 return $payment;
             });
 
-            // Hapus hanya produk yang berhasil masuk ke checkout ini.
+            // Setelah transaksi berhasil dibuat, bersihkan item yang baru saja dipindahkan ke checkout.
             DB::transaction(function () use ($user, $validated) {
                 $cart = Cart::query()
                     ->where('user_id', $user->id)

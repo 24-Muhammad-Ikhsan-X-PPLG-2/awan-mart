@@ -19,10 +19,21 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * Controller administrasi untuk procurement.
+ *
+ * Controller ini menjaga flow dari pembuatan pengadaan sampai finalisasi,
+ * termasuk validasi supplier, item, filter, dan penambahan stok saat barang
+ * diterima di sisi admin.
+ */
 class AdminProcurementController extends Controller
 {
+    /**
+     * Menampilkan daftar procurement admin dengan filter pencarian, status, dan tanggal.
+     */
     public function index(Request $request): Response
     {
+        // Validasi input query dari URL, termasuk search dan filter status/tanggal.
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
             'status' => ['nullable', 'string', Rule::in($this->statusValues())],
@@ -35,6 +46,8 @@ class AdminProcurementController extends Controller
             ->selectRaw('COUNT(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');
+
+        // Search nomor procurement bisa ditulis dalam format PG-000123 atau angka saja.
         $searchNumber = null;
         if (preg_match('/^PG-0*(\d+)$/i', $search, $matches) === 1) {
             $searchNumber = (int) $matches[1];
@@ -106,6 +119,9 @@ class AdminProcurementController extends Controller
         ]);
     }
 
+    /**
+     * Menampilkan form pembuatan procurement baru dengan opsi supplier dan produk.
+     */
     public function create(Request $request): Response
     {
         return Inertia::render('admin/procurements/create', [
@@ -116,6 +132,9 @@ class AdminProcurementController extends Controller
         ]);
     }
 
+    /**
+     * Endpoint AJAX untuk pencarian cepat supplier/product yang dipakai form.
+     */
     public function options(Request $request): JsonResponse
     {
         $validated = $request->validate([
@@ -131,6 +150,9 @@ class AdminProcurementController extends Controller
         ]);
     }
 
+    /**
+     * Membuat procurement baru dan item-itemnya dalam satu transaction.
+     */
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -154,6 +176,7 @@ class AdminProcurementController extends Controller
         $items = $this->normalizeItems($validated['items'] ?? null);
 
         $procurement = DB::transaction(function () use ($validated, $admin, $items): Procurement {
+            // Pastikan supplier yang dipilih valid secara aktif dan masih berstatus supplier.
             $supplier = Supplier::query()
                 ->whereKey($validated['supplier_id'])
                 ->whereHas('user', fn (Builder $query) => $query->where('role', UserRole::Supplier))
@@ -166,6 +189,7 @@ class AdminProcurementController extends Controller
                 ]);
             }
 
+            // Cek produk yang dipilih semuanya valid sebelum menulis procurement.
             $productIds = array_values(array_unique(array_column($items, 'product_id')));
             $products = Product::query()
                 ->whereIn('id', $productIds)
@@ -204,6 +228,9 @@ class AdminProcurementController extends Controller
             ->with('success', 'Permintaan pengadaan berhasil dibuat.');
     }
 
+    /**
+     * Menampilkan detail procurement lengkap: supplier, item, subtotal, dan status saat ini.
+     */
     public function show(Request $request, Procurement $procurement): Response
     {
         $procurement->load([
@@ -211,6 +238,8 @@ class AdminProcurementController extends Controller
             'admin:id,name',
             'procurement_items.product.product_images',
         ]);
+
+        // Transform item agar mudah dibaca di frontend dan bisa dihitung subtotal.
         $items = $procurement->procurement_items
             ->map(fn (ProcurementItem $item): array => [
                 'id' => $item->id,
@@ -222,6 +251,8 @@ class AdminProcurementController extends Controller
                 'subtotal' => (float) $item->price * $item->quantity,
             ])
             ->values();
+
+        // Hitung histori total nilai dari supplier agar detail terlihat lebih informatif.
         $supplierTotals = DB::table('procurements')
             ->leftJoin('procurement_items', 'procurement_items.procurement_id', '=', 'procurements.id')
             ->where('procurements.supplier_id', $procurement->supplier_id)
@@ -262,6 +293,9 @@ class AdminProcurementController extends Controller
         ]);
     }
 
+    /**
+     * Menyelesaikan procurement yang sudah dikirim oleh supplier dan menambah stok.
+     */
     public function updateStatus(Request $request, Procurement $procurement): RedirectResponse
     {
         $validated = $request->validate([
@@ -272,6 +306,7 @@ class AdminProcurementController extends Controller
         $targetStatus = ProcurementStatus::from($validated['status']);
 
         DB::transaction(function () use ($procurement, $targetStatus): void {
+            // Lock row procurement agar perubahan stok & status tidak race condition.
             $lockedProcurement = Procurement::query()
                 ->lockForUpdate()
                 ->findOrFail($procurement->id);
@@ -285,6 +320,7 @@ class AdminProcurementController extends Controller
                 ]);
             }
 
+            // Ringkas item per produk lalu tambahkan stok sesuai jumlah yang diterima.
             $items = $lockedProcurement->procurement_items()
                 ->select('product_id')
                 ->selectRaw('SUM(quantity) as quantity')
@@ -372,6 +408,7 @@ class AdminProcurementController extends Controller
 
         $normalized = [];
         foreach ($items as $item) {
+            // Setiap item harus punya product_id, quantity, dan price yang numerik.
             if (
                 ! is_array($item)
                 || ! isset($item['product_id'], $item['quantity'], $item['price'])
