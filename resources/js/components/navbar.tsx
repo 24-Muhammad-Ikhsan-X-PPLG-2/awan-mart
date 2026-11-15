@@ -46,6 +46,7 @@ const Navbar: FC<Props> = ({ activePage }) => {
             const dataCategories = await response.json();
             if (mounted) {
                 setCartCount(data);
+                console.log(dataCategories);
                 setCategories(dataCategories.categories);
             }
         })();

@@ -46,12 +46,17 @@ class CartController extends Controller
     }
     public function cart_count(): string
     {
-        $user = Auth::user();
-        if (!$user) {
-            return redirect()->to('/auth/login');
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                return redirect()->to('/auth/login');
+            }
+            $count = $user->cart->cart_items()->sum('quantity');
+            return $count > 99 ? '99+' : (string) $count;
+        } catch (\Exception $e) {
+            report($e);
+            return "0";
         }
-        $count = $user->cart->cart_items()->sum('quantity');
-        return $count > 99 ? '99+' : (string) $count;
     }
     public function cart_delete(Request $req)
     {

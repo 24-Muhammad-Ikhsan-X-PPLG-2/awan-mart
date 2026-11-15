@@ -15,7 +15,7 @@ import type { LucideIcon } from 'lucide-react';
 import type { DashboardProps } from '../types';
 import { getInitials } from '../formatters';
 
-export type AdminSection = 'dashboard' | 'orders';
+export type AdminSection = 'dashboard' | 'orders' | 'procurements';
 
 const navigation: Array<{
     label: string;
@@ -39,7 +39,12 @@ const navigation: Array<{
     },
     { label: 'Pelanggan', icon: Users },
     { label: 'Supplier', icon: Truck },
-    { label: 'Pengadaan', icon: ClipboardList },
+    {
+        label: 'Pengadaan',
+        href: '/admin/procurements',
+        icon: ClipboardList,
+        section: 'procurements',
+    },
     { label: 'Pengaturan', icon: Settings },
 ];
 

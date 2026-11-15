@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminOrderController;
+use App\Http\Controllers\AdminProcurementController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
@@ -60,6 +61,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('admin.orders.show');
         Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])
             ->name('admin.orders.update-status');
+        Route::get('/procurements', [AdminProcurementController::class, 'index'])
+            ->name('admin.procurements.index');
+        Route::get('/procurements/create', [AdminProcurementController::class, 'create'])
+            ->name('admin.procurements.create');
+        Route::get('/procurements/options', [AdminProcurementController::class, 'options'])
+            ->name('admin.procurements.options');
+        Route::post('/procurements', [AdminProcurementController::class, 'store'])
+            ->name('admin.procurements.store');
+        Route::get('/procurements/{procurement}', [AdminProcurementController::class, 'show'])
+            ->name('admin.procurements.show');
+        Route::patch('/procurements/{procurement}/status', [AdminProcurementController::class, 'updateStatus'])
+            ->name('admin.procurements.update-status');
     });
 });
 // Detail Product

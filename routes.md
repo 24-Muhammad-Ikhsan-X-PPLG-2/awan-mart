@@ -116,9 +116,12 @@ Prefix: `/admin`
 
 - `GET /admin/procurements` — Menampilkan daftar pengadaan.
 - `GET /admin/procurements/create` — Menampilkan form pengadaan.
+- `GET /admin/procurements/options` — Mencari supplier atau produk untuk form pengadaan.
 - `POST /admin/procurements` — Membuat permintaan pengadaan.
 - `GET /admin/procurements/{id}` — Menampilkan detail pengadaan.
-- `PATCH /admin/procurements/{id}/status` — Memperbarui status pengadaan.
+- `PATCH /admin/procurements/{id}/status` — Menyetujui pengadaan atau menandai barang diterima.
+
+Status yang didukung saat ini adalah `pending`, `approved`, dan `completed`. Stok produk hanya bertambah saat transisi valid ke `completed`. Nomor pengadaan ditampilkan dari ID record karena skema belum memiliki kolom nomor tersendiri. Riwayat status dan tanggal perkiraan pengiriman belum tersedia di skema.
 
 ## 5. Supplier Routes
 

@@ -18,12 +18,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Admin extends Model
 {
     protected $table = 'admin';
+
     public $timestamps = false;
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
+
+    /** @return HasMany<Procurement, $this> */
     public function procurements(): HasMany
     {
         return $this->hasMany(Procurement::class);

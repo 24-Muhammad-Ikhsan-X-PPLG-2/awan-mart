@@ -2,18 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Override;
-
-enum ProcurementStatus: string
-{
-    case Pending = 'pending';
-    case Approved = 'approved';
-    case Completed = 'completed';
-}
 
 /**
  * @property int $id
@@ -25,6 +19,7 @@ enum ProcurementStatus: string
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
+#[Fillable(['supplier_id', 'admin_id', 'tanggal_pengadaan', 'status', 'catatan'])]
 class Procurement extends Model
 {
     protected $table = 'procurements';
@@ -34,6 +29,7 @@ class Procurement extends Model
     {
         return [
             'tanggal_pengadaan' => 'datetime',
+            'status' => ProcurementStatus::class,
         ];
     }
 
