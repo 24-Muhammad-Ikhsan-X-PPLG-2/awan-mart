@@ -14,12 +14,22 @@ use Override;
  * @property int $supplier_id
  * @property int $admin_id
  * @property Carbon $tanggal_pengadaan
+ * @property Carbon|null $tanggal_pengiriman
  * @property ProcurementStatus $status
  * @property string|null $catatan
+ * @property string|null $alasan_penolakan
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['supplier_id', 'admin_id', 'tanggal_pengadaan', 'status', 'catatan'])]
+#[Fillable([
+    'supplier_id',
+    'admin_id',
+    'tanggal_pengadaan',
+    'tanggal_pengiriman',
+    'status',
+    'catatan',
+    'alasan_penolakan',
+])]
 class Procurement extends Model
 {
     protected $table = 'procurements';
@@ -29,6 +39,7 @@ class Procurement extends Model
     {
         return [
             'tanggal_pengadaan' => 'datetime',
+            'tanggal_pengiriman' => 'datetime',
             'status' => ProcurementStatus::class,
         ];
     }

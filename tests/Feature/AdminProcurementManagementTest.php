@@ -91,7 +91,7 @@ test('procurement creation rejects duplicate products and invalid suppliers', fu
     expect(Procurement::query()->count())->toBe(0);
 });
 
-test('completing an approved procurement updates stock once and validates transitions', function () {
+test('admin can receive a shipped procurement and update stock only once', function () {
     [$adminUser] = createAdminProcurementAdmin();
     [$supplier] = createAdminProcurementSupplier();
     [$product] = createAdminProcurementProducts($adminUser);
@@ -108,10 +108,15 @@ test('completing an approved procurement updates stock once and validates transi
         ->assertSessionHasErrors('status');
     expect($product->fresh()->stock)->toBe(5);
 
-    $this->patch("/admin/procurements/{$procurement->id}/status", ['status' => 'approved'])
-        ->assertRedirect();
-    expect($procurement->fresh()->status)->toBe(ProcurementStatus::Approved)
-        ->and($product->fresh()->stock)->toBe(5);
+    $procurement->update(['status' => ProcurementStatus::Approved]);
+    $this->patch("/admin/procurements/{$procurement->id}/status", ['status' => 'completed'])
+        ->assertSessionHasErrors('status');
+    expect($product->fresh()->stock)->toBe(5);
+
+    $procurement->update([
+        'status' => ProcurementStatus::Shipped,
+        'tanggal_pengiriman' => now(),
+    ]);
 
     $this->patch("/admin/procurements/{$procurement->id}/status", ['status' => 'completed'])
         ->assertRedirect();
@@ -151,7 +156,7 @@ test('admin can view procurement items and supplier summary', function () {
     [$adminUser] = createAdminProcurementAdmin();
     [$supplier] = createAdminProcurementSupplier();
     [$product] = createAdminProcurementProducts($adminUser);
-    $procurement = createAdminProcurement($adminUser, $supplier, ProcurementStatus::Approved);
+    $procurement = createAdminProcurement($adminUser, $supplier, ProcurementStatus::Shipped);
     ProcurementItem::query()->create([
         'procurement_id' => $procurement->id,
         'product_id' => $product->id,

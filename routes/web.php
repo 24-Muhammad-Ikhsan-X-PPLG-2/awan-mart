@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MidtransNotificationController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\SupplierProcurementController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -73,6 +74,18 @@ Route::middleware(['auth'])->group(function () {
             ->name('admin.procurements.show');
         Route::patch('/procurements/{procurement}/status', [AdminProcurementController::class, 'updateStatus'])
             ->name('admin.procurements.update-status');
+    });
+    Route::prefix('supplier')->middleware('role:supplier')->group(function () {
+        Route::get('/procurements', [SupplierProcurementController::class, 'index'])
+            ->name('supplier.procurements.index');
+        Route::get('/procurements/{procurement}', [SupplierProcurementController::class, 'show'])
+            ->name('supplier.procurements.show');
+        Route::patch('/procurements/{procurement}/accept', [SupplierProcurementController::class, 'accept'])
+            ->name('supplier.procurements.accept');
+        Route::patch('/procurements/{procurement}/reject', [SupplierProcurementController::class, 'reject'])
+            ->name('supplier.procurements.reject');
+        Route::patch('/procurements/{procurement}/ship', [SupplierProcurementController::class, 'ship'])
+            ->name('supplier.procurements.ship');
     });
 });
 // Detail Product

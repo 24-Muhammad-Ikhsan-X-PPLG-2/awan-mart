@@ -19,13 +19,21 @@ const statusDetails: Record<
     { title: string; description: string }
 > = {
     pending: {
-        title: 'Menunggu persetujuan',
-        description: 'Pengadaan tercatat dan menunggu persetujuan admin.',
+        title: 'Menunggu respons supplier',
+        description: 'Permintaan menunggu supplier menerima atau menolak.',
     },
     approved: {
-        title: 'Disetujui',
+        title: 'Diterima supplier',
+        description: 'Supplier menerima permintaan. Stok belum berubah.',
+    },
+    rejected: {
+        title: 'Ditolak supplier',
+        description: 'Supplier menolak permintaan pengadaan ini.',
+    },
+    shipped: {
+        title: 'Barang dikirim',
         description:
-            'Pengadaan disetujui. Stok belum berubah sampai barang diterima.',
+            'Supplier mengonfirmasi pengiriman. Stok belum berubah sampai admin menerima barang.',
     },
     completed: {
         title: 'Selesai',
@@ -40,12 +48,10 @@ const ProcurementDetailsPanel = ({
     procurement: ProcurementDetailProps['procurement'];
     success: string | null;
 }) => {
-    const form = useForm<{ status: 'approved' | 'completed' }>({
-        status: procurement.canApprove ? 'approved' : 'completed',
-    });
-    const [confirmStatus, setConfirmStatus] = useState<
-        'approved' | 'completed' | null
-    >(null);
+    const form = useForm<{ status: 'completed' }>({ status: 'completed' });
+    const [confirmStatus, setConfirmStatus] = useState<'completed' | null>(
+        null,
+    );
 
     const submitStatus = () => {
         if (!confirmStatus) {
@@ -71,16 +77,6 @@ const ProcurementDetailsPanel = ({
                     Kembali ke daftar pengadaan
                 </a>
                 <div className="flex flex-wrap gap-2">
-                    {procurement.canApprove && (
-                        <button
-                            type="button"
-                            onClick={() => setConfirmStatus('approved')}
-                            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[#203452] px-4 text-xs font-semibold text-white transition hover:bg-[#314D73]"
-                        >
-                            <Check size={15} />
-                            Setujui Pengadaan
-                        </button>
-                    )}
                     {procurement.canComplete && (
                         <button
                             type="button"
@@ -147,6 +143,24 @@ const ProcurementDetailsPanel = ({
                                     <p className="mt-1 text-[11px] leading-5 text-[#778396]">
                                         {activeStatus.description}
                                     </p>
+                                    {procurement.shippedAt && (
+                                        <p className="mt-2 text-[10px] font-medium text-[#526B91]">
+                                            Dikonfirmasi dikirim:{' '}
+                                            {formatDate(procurement.shippedAt, {
+                                                day: 'numeric',
+                                                month: 'short',
+                                                year: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                            })}
+                                        </p>
+                                    )}
+                                    {procurement.rejectionReason && (
+                                        <p className="mt-2 text-[10px] leading-5 text-[#9A5E50]">
+                                            Alasan penolakan:{' '}
+                                            {procurement.rejectionReason}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -438,31 +452,22 @@ const ProcurementDetailsPanel = ({
                         className="relative z-10 w-full max-w-md rounded-xl border border-[#E5E8EE] bg-white p-5 shadow-xl sm:p-6"
                     >
                         <div className="flex size-10 items-center justify-center rounded-lg bg-[#EEF2F8] text-[#203452]">
-                            {confirmStatus === 'approved' ? (
-                                <Check size={19} />
-                            ) : (
-                                <PackageCheck size={19} />
-                            )}
+                            <PackageCheck size={19} />
                         </div>
                         <h2
                             id="procurement-confirm-title"
                             className="mt-4 text-base font-semibold text-[#203452]"
                         >
-                            {confirmStatus === 'approved'
-                                ? 'Setujui pengadaan ini?'
-                                : 'Tandai barang telah diterima?'}
+                            Tandai barang telah diterima?
                         </h2>
                         <p className="mt-2 text-sm leading-6 text-[#667085]">
-                            {confirmStatus === 'approved'
-                                ? 'Pengadaan akan berubah dari menunggu menjadi disetujui. Stok produk tidak akan berubah.'
-                                : 'Pengadaan akan diselesaikan dan jumlah stok setiap produk akan bertambah sesuai kuantitas pengadaan.'}
+                            Pengadaan akan diselesaikan dan jumlah stok setiap
+                            produk akan bertambah sesuai kuantitas pengadaan.
                         </p>
-                        {confirmStatus === 'completed' && (
-                            <p className="mt-2 text-xs leading-5 text-[#92733B]">
-                                Pastikan barang sudah diterima. Penambahan stok
-                                diproses satu kali bersama perubahan status.
-                            </p>
-                        )}
+                        <p className="mt-2 text-xs leading-5 text-[#92733B]">
+                            Pastikan barang sudah diterima. Penambahan stok
+                            diproses satu kali bersama perubahan status.
+                        </p>
                         <div className="mt-6 flex justify-end gap-2">
                             <button
                                 type="button"

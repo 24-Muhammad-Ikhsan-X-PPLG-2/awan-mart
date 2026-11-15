@@ -240,8 +240,9 @@ class AdminProcurementController extends Controller
                 'updatedAt' => $procurement->updated_at?->toISOString(),
                 'status' => $procurement->status->value,
                 'notes' => $procurement->catatan,
-                'canApprove' => $procurement->status === ProcurementStatus::Pending,
-                'canComplete' => $procurement->status === ProcurementStatus::Approved,
+                'canComplete' => $procurement->status === ProcurementStatus::Shipped,
+                'shippedAt' => $procurement->tanggal_pengiriman?->toISOString(),
+                'rejectionReason' => $procurement->alasan_penolakan,
                 'createdBy' => $procurement->admin->name,
                 'supplier' => [
                     'id' => $procurement->supplier->id,
@@ -265,7 +266,6 @@ class AdminProcurementController extends Controller
     {
         $validated = $request->validate([
             'status' => ['required', 'string', Rule::in([
-                ProcurementStatus::Approved->value,
                 ProcurementStatus::Completed->value,
             ])],
         ]);
@@ -277,17 +277,8 @@ class AdminProcurementController extends Controller
                 ->findOrFail($procurement->id);
 
             if (
-                $targetStatus === ProcurementStatus::Approved
-                && $lockedProcurement->status === ProcurementStatus::Pending
-            ) {
-                $lockedProcurement->update(['status' => ProcurementStatus::Approved]);
-
-                return;
-            }
-
-            if (
                 $targetStatus !== ProcurementStatus::Completed
-                || $lockedProcurement->status !== ProcurementStatus::Approved
+                || $lockedProcurement->status !== ProcurementStatus::Shipped
             ) {
                 throw ValidationException::withMessages([
                     'status' => 'Perubahan status pengadaan tidak valid.',
@@ -321,9 +312,7 @@ class AdminProcurementController extends Controller
 
         return back()->with(
             'success',
-            $targetStatus === ProcurementStatus::Approved
-                ? 'Pengadaan berhasil disetujui.'
-                : 'Pengadaan selesai dan stok produk telah diperbarui.'
+            'Pengadaan selesai dan stok produk telah diperbarui.'
         );
     }
 

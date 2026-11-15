@@ -7,7 +7,12 @@ export type OrderStatusValue =
     | 'completed'
     | 'canceled';
 
-export type ProcurementStatusValue = 'pending' | 'approved' | 'completed';
+export type ProcurementStatusValue =
+    | 'pending'
+    | 'approved'
+    | 'rejected'
+    | 'shipped'
+    | 'completed';
 
 export type DashboardProps = {
     admin: {
@@ -166,7 +171,12 @@ export type OrderDetailProps = {
     };
 };
 
-export type ProcurementStatus = 'pending' | 'approved' | 'completed';
+export type ProcurementStatus =
+    | 'pending'
+    | 'approved'
+    | 'rejected'
+    | 'shipped'
+    | 'completed';
 
 export type ProcurementSupplierOption = {
     id: number;
@@ -245,8 +255,9 @@ export type ProcurementDetailProps = {
         updatedAt: string | null;
         status: ProcurementStatus;
         notes: string | null;
-        canApprove: boolean;
         canComplete: boolean;
+        shippedAt: string | null;
+        rejectionReason: string | null;
         createdBy: string;
         supplier: ProcurementSupplierOption & {
             procurementCount: number;

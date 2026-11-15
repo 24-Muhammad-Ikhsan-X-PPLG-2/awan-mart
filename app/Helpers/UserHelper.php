@@ -10,26 +10,21 @@ if (!function_exists('getInformationUser')) {
         if (!$user) {
             return null;
         }
-        $information = [
+
+        $role = $user->role instanceof \BackedEnum ? $user->role->value : $user->role;
+        $profile = match ($role) {
+            'admin' => $user->admin,
+            'supplier' => $user->supplier,
+            default => $user->pelanggan,
+        };
+
+        return [
             'email' => $user->email,
-            'role' => $user->role,
+            'role' => $role,
+            'name' => $profile?->name,
+            'alamat' => $profile?->alamat,
+            'telp' => $profile?->telp,
         ];
-        if ($user->role === "admin") {
-            $information['name'] = $user->admin->name;
-            $information['alamat'] = $user->admin->alamat;
-            $information['telp'] = $user->admin->telp;
-            return $information;
-        } else if ($user->role === "supplier") {
-            $information['name'] = $user->supplier->name;
-            $information['alamat'] = $user->supplier->alamat;
-            $information['telp'] = $user->supplier->telp;
-            return $information;
-        } else {
-            $information['name'] = $user->pelanggan->name;
-            $information['alamat'] = $user->pelanggan->alamat;
-            $information['telp'] = $user->pelanggan->telp;
-            return $information;
-        }
     }
 }
 
@@ -39,25 +34,20 @@ if (!function_exists('getInformationUserRequest')) {
         if (!$user) {
             return null;
         }
-        $information = [
+
+        $role = $user->role instanceof \BackedEnum ? $user->role->value : $user->role;
+        $profile = match ($role) {
+            'admin' => $user->admin,
+            'supplier' => $user->supplier,
+            default => $user->pelanggan,
+        };
+
+        return [
             'email' => $user->email,
-            'role' => $user->role->value,
+            'role' => $role,
+            'name' => $profile?->name,
+            'alamat' => $profile?->alamat,
+            'telp' => $profile?->telp,
         ];
-        if ($user->role->value === "admin") {
-            $information['name'] = $user->admin->name;
-            $information['alamat'] = $user->admin->alamat;
-            $information['telp'] = $user->admin->telp;
-            return $information;
-        } else if ($user->role->value === "supplier") {
-            $information['name'] = $user->supplier->name;
-            $information['alamat'] = $user->supplier->alamat;
-            $information['telp'] = $user->supplier->telp;
-            return $information;
-        } else {
-            $information['name'] = $user->pelanggan->name;
-            $information['alamat'] = $user->pelanggan->alamat;
-            $information['telp'] = $user->pelanggan->telp;
-            return $information;
-        }
     }
 }

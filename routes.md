@@ -121,33 +121,31 @@ Prefix: `/admin`
 - `GET /admin/procurements/{id}` — Menampilkan detail pengadaan.
 - `PATCH /admin/procurements/{id}/status` — Menyetujui pengadaan atau menandai barang diterima.
 
-Status yang didukung saat ini adalah `pending`, `approved`, dan `completed`. Stok produk hanya bertambah saat transisi valid ke `completed`. Nomor pengadaan ditampilkan dari ID record karena skema belum memiliki kolom nomor tersendiri. Riwayat status dan tanggal perkiraan pengiriman belum tersedia di skema.
+Status pengadaan adalah `pending`, `approved` (diterima supplier), `rejected`, `shipped`, dan `completed`. Supplier hanya dapat mengakses permintaan milik akun suppliernya, menerima/menolak permintaan yang masih `pending`, dan mengonfirmasi pengiriman setelah menerima. Admin hanya menambah stok ketika menandai barang diterima (`completed`) setelah supplier mengonfirmasi status `shipped`. Nomor pengadaan ditampilkan dari ID record karena skema belum memiliki kolom nomor tersendiri. Kurir, nomor resi, dan riwayat status belum didukung.
 
-## 5. Supplier Routes
+## 5. Supplier Portal
+
+Middleware: `auth`, `role:supplier`
+
+- `GET /supplier/procurements` — Melihat permintaan pengadaan milik supplier aktif, termasuk filter dan pagination.
+- `GET /supplier/procurements/{procurement}` — Melihat detail permintaan milik supplier aktif.
+- `PATCH /supplier/procurements/{procurement}/accept` — Menerima permintaan yang masih `pending`.
+- `PATCH /supplier/procurements/{procurement}/reject` — Menolak permintaan `pending` dengan alasan.
+- `PATCH /supplier/procurements/{procurement}/ship` — Mengonfirmasi pengiriman untuk permintaan `approved`.
+
+## 5. Supplier Portal
 
 Middleware: `auth`, `role:supplier`
 
 Prefix: `/supplier`
 
-### Dashboard
+- `GET /supplier/procurements` — Melihat permintaan pengadaan milik supplier aktif, termasuk filter dan pagination.
+- `GET /supplier/procurements/{procurement}` — Melihat detail permintaan milik supplier aktif.
+- `PATCH /supplier/procurements/{procurement}/accept` — Menerima permintaan yang masih `pending`.
+- `PATCH /supplier/procurements/{procurement}/reject` — Menolak permintaan `pending` dengan alasan.
+- `PATCH /supplier/procurements/{procurement}/ship` — Mengonfirmasi pengiriman untuk permintaan `approved`.
 
-- `GET /supplier/dashboard` — Menampilkan dashboard supplier.
-
-### Procurement Requests
-
-- `GET /supplier/procurements` — Menampilkan daftar permintaan pengadaan.
-- `GET /supplier/procurements/{id}` — Menampilkan detail permintaan pengadaan.
-- `PATCH /supplier/procurements/{id}/status` — Memperbarui status permintaan pengadaan.
-
-### Supplied Products
-
-- `GET /supplier/products` — Menampilkan daftar produk yang disediakan.
-- `GET /supplier/products/{id}` — Menampilkan detail produk.
-
-### Profile
-
-- `GET /supplier/profile` — Menampilkan profil supplier.
-- `PATCH /supplier/profile` — Memperbarui informasi profil.
+Supplier hanya dapat membaca atau mengubah pengadaan yang terhubung ke profil supplier miliknya. Stok tidak berubah saat permintaan diterima atau dikirim; hanya penerimaan yang dikonfirmasi admin setelah status `shipped` yang memperbarui stok. Kurir, nomor resi, dan notifikasi admin belum didukung infrastruktur.
 
 ## 6. Middleware & Authorization
 

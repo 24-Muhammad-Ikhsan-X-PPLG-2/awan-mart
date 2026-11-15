@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Pelanggan;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -23,15 +24,35 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        $user = User::query()->create([
-            'email' => 'ican@ade.com',
+        $userAdmin = User::query()->create([
+            'email' => 'ican@admin.com',
             'password' => 'icanganteng123',
             'role' => 'admin'
         ]);
         Admin::query()->create([
-            'user_id' => $user->id,
+            'user_id' => $userAdmin->id,
             'name' => 'icannnnnnn'
         ]);
+        $user = User::query()->create([
+            'email' => 'ican@awan.com',
+            'password' => 'icantik123',
+            'role' => 'pelanggan'
+        ]);
+        Pelanggan::query()->create([
+            'user_id' => $user->id,
+            'name' => 'ikhsannn'
+        ]);
+        $kurir = User::query()->create([
+            'email' => 'kurir12@jne.com',
+            'password' => 'kurir123321',
+            'role' => 'supplier'
+        ]);
+        Supplier::query()->create([
+            'user_id' => $kurir->id,
+            'name' => 'kurir jne'
+        ]);
+        $product = new ProductSeeder();
+        $product->run();
         // $category = Category::query()->create([
         //     'name' => 'laptop',
         //     'description' => 'Digital'

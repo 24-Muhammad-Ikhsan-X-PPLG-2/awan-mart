@@ -8,8 +8,8 @@ import { formatNumber } from '../formatters';
 
 const statsConfig = [
     { key: 'total', label: 'Total pengadaan', icon: ClipboardList },
-    { key: 'pending', label: 'Menunggu', icon: Clock3 },
-    { key: 'approved', label: 'Disetujui', icon: PackageCheck },
+    { key: 'pending', label: 'Menunggu respons', icon: Clock3 },
+    { key: 'approved', label: 'Diterima', icon: PackageCheck },
     { key: 'completed', label: 'Selesai', icon: CheckCircle2 },
 ] as const;
 

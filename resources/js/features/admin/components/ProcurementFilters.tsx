@@ -2,8 +2,10 @@ import { Search, X } from 'lucide-react';
 import type { ProcurementManagementProps, ProcurementStatus } from '../types';
 
 const statusLabels: Record<ProcurementStatus, string> = {
-    pending: 'Menunggu',
-    approved: 'Disetujui',
+    pending: 'Menunggu respons',
+    approved: 'Diterima / diproses',
+    rejected: 'Ditolak',
+    shipped: 'Dikirim',
     completed: 'Selesai',
 };
 

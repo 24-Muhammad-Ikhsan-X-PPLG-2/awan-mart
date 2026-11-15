@@ -4,14 +4,18 @@ import type { DashboardProps, ProcurementStatusValue } from '../types';
 import { formatDate } from '../formatters';
 
 const statusLabels: Record<ProcurementStatusValue, string> = {
-    pending: 'Menunggu',
-    approved: 'Disetujui',
+    pending: 'Menunggu respons',
+    approved: 'Diterima / diproses',
+    rejected: 'Ditolak',
+    shipped: 'Dikirim',
     completed: 'Selesai',
 };
 
 const statusClasses: Record<ProcurementStatusValue, string> = {
     pending: 'bg-[#F8F3E8] text-[#92733B]',
     approved: 'bg-[#EEF2F8] text-[#526B91]',
+    rejected: 'bg-[#F9F1EF] text-[#9A5E50]',
+    shipped: 'bg-[#F3EEFA] text-[#71529B]',
     completed: 'bg-[#EDF4EF] text-[#557963]',
 };
 
@@ -34,7 +38,7 @@ const ProcurementOverview = ({
         <div className="mb-5 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
             <CountTile label="Total" value={procurements.total} />
             <CountTile label="Menunggu" value={procurements.pending} />
-            <CountTile label="Disetujui" value={procurements.approved} />
+            <CountTile label="Diterima" value={procurements.approved} />
             <CountTile label="Selesai" value={procurements.completed} />
         </div>
         {procurements.recent.length ? (
