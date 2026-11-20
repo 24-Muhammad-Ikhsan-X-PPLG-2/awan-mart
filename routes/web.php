@@ -17,9 +17,12 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SupplierDeliveryController;
 use App\Http\Controllers\SupplierProcurementController;
 use App\Http\Controllers\UserController;
+use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index']);
+Route::get('/about', fn () => Inertia::render('about'));
+Route::get('/help', fn () => Inertia::render('help'));
 
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductsController::class, 'index']);
