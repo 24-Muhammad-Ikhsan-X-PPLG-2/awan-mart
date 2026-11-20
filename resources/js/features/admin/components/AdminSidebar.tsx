@@ -15,7 +15,13 @@ import type { LucideIcon } from 'lucide-react';
 import type { DashboardProps } from '../types';
 import { getInitials } from '../formatters';
 
-export type AdminSection = 'dashboard' | 'orders' | 'procurements';
+export type AdminSection =
+    | 'dashboard'
+    | 'products'
+    | 'categories'
+    | 'orders'
+    | 'customers'
+    | 'procurements';
 
 const navigation: Array<{
     label: string;
@@ -29,15 +35,15 @@ const navigation: Array<{
         icon: LayoutDashboard,
         section: 'dashboard',
     },
-    { label: 'Produk', icon: Package },
-    { label: 'Kategori', icon: Tag },
+    { label: 'Produk', href: '/admin/products', icon: Package, section: 'products' },
+    { label: 'Kategori', href: '/admin/categories', icon: Tag, section: 'categories' },
     {
         label: 'Pesanan',
         href: '/admin/orders',
         icon: ShoppingBag,
         section: 'orders',
     },
-    { label: 'Pelanggan', icon: Users },
+    { label: 'Pelanggan', href: '/admin/customers', icon: Users, section: 'customers' },
     { label: 'Supplier', icon: Truck },
     {
         label: 'Pengadaan',

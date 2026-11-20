@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\Review;
 use Inertia\Inertia;
 
@@ -22,6 +23,7 @@ class HomeController extends Controller
             'category',
             'product_images'
         ])->limit(4)->get();
+        $this->normalizeProductImages($products);
 
         // Kategori ini dipakai untuk navigasi cepat di halaman depan.
         $categories = Category::limit(7)->get();
@@ -42,6 +44,7 @@ class HomeController extends Controller
             'category',
             'product_images',
         ]);
+        $this->normalizeProductImages(collect([$product]));
 
         $reviews = $product->reviews()
             ->with('user.pelanggan')
@@ -87,5 +90,26 @@ class HomeController extends Controller
                 'distribution' => $distribution,
             ],
         ]);
+    }
+
+    private function normalizeProductImages(\Illuminate\Support\Collection $products): void
+    {
+        $products->each(function (Product $product): void {
+            $product->product_images->each(function (ProductImage $image): void {
+                $path = $image->getRawOriginal('image');
+                $image->setAttribute('image', $this->imageUrl($path));
+            });
+        });
+    }
+
+    private function imageUrl(?string $path): ?string
+    {
+        if ($path === null || $path === '') {
+            return null;
+        }
+
+        return str_starts_with($path, '/') || str_starts_with($path, 'http')
+            ? $path
+            : asset('storage/'.$path);
     }
 }

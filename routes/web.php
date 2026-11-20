@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminCatalogController;
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminProcurementController;
 use App\Http\Controllers\AuthController;
@@ -62,6 +63,24 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('admin')->middleware('role:admin')->group(function () {
         Route::get('/', DashboardController::class)->name('admin.dashboard');
+        Route::get('/products', [AdminCatalogController::class, 'products'])->name('admin.products.index');
+        Route::get('/products/create', [AdminCatalogController::class, 'createProduct'])->name('admin.products.create');
+        Route::post('/products', [AdminCatalogController::class, 'storeProduct'])->name('admin.products.store');
+        Route::get('/products/{product}/edit', [AdminCatalogController::class, 'editProduct'])->name('admin.products.edit');
+        Route::put('/products/{product}', [AdminCatalogController::class, 'updateProduct'])->name('admin.products.update');
+        Route::delete('/products/{product}', [AdminCatalogController::class, 'destroyProduct'])->name('admin.products.destroy');
+        Route::get('/categories', [AdminCatalogController::class, 'categories'])->name('admin.categories.index');
+        Route::get('/categories/create', [AdminCatalogController::class, 'createCategory'])->name('admin.categories.create');
+        Route::post('/categories', [AdminCatalogController::class, 'storeCategory'])->name('admin.categories.store');
+        Route::get('/categories/{category}/edit', [AdminCatalogController::class, 'editCategory'])->name('admin.categories.edit');
+        Route::put('/categories/{category}', [AdminCatalogController::class, 'updateCategory'])->name('admin.categories.update');
+        Route::delete('/categories/{category}', [AdminCatalogController::class, 'destroyCategory'])->name('admin.categories.destroy');
+        Route::get('/customers', [AdminCatalogController::class, 'customers'])->name('admin.customers.index');
+        Route::get('/customers/create', [AdminCatalogController::class, 'createCustomer'])->name('admin.customers.create');
+        Route::post('/customers', [AdminCatalogController::class, 'storeCustomer'])->name('admin.customers.store');
+        Route::get('/customers/{customer}/edit', [AdminCatalogController::class, 'editCustomer'])->name('admin.customers.edit');
+        Route::put('/customers/{customer}', [AdminCatalogController::class, 'updateCustomer'])->name('admin.customers.update');
+        Route::delete('/customers/{customer}', [AdminCatalogController::class, 'destroyCustomer'])->name('admin.customers.destroy');
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('admin.orders.show');
         Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])

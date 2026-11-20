@@ -278,3 +278,108 @@ export type ProcurementDetailProps = {
         };
     };
 };
+
+export type AdminPagination<T> = {
+    data: T[];
+    links: Array<{
+        url: string | null;
+        label: string;
+        active: boolean;
+    }>;
+    current_page: number;
+    from: number | null;
+    to: number | null;
+    total: number;
+    last_page: number;
+};
+
+export type AdminProduct = {
+    id: number;
+    name: string;
+    slug: string;
+    price: number;
+    stock: number;
+    categoryId: number;
+    category: string;
+    image: string | null;
+    ordersCount: number;
+    reviewsCount: number;
+};
+
+export type AdminCategory = {
+    id: number;
+    name: string;
+    description: string | null;
+    icon: string | null;
+    productsCount: number;
+};
+
+export type AdminCustomer = {
+    id: number;
+    userId: number;
+    name: string;
+    email: string;
+    phone: string | null;
+    ordersCount: number;
+    joinedAt: string | null;
+};
+
+export type AdminProductsProps = {
+    admin: DashboardProps['admin'];
+    generatedAt: string;
+    products: AdminPagination<AdminProduct>;
+    categories: Array<{ id: number; name: string }>;
+    filters: { search: string; category: number | null };
+};
+
+export type AdminProductFormProps = {
+    admin: DashboardProps['admin'];
+    generatedAt: string;
+    product: null | {
+        id: number;
+        name: string;
+        slug: string;
+        description: string;
+        price: string;
+        stock: string;
+        category_id: string;
+        images: Array<{ id: number; url: string }>;
+    };
+    categories: Array<{ id: number; name: string }>;
+};
+
+export type AdminCategoriesProps = {
+    admin: DashboardProps['admin'];
+    generatedAt: string;
+    categories: AdminPagination<AdminCategory>;
+    filters: { search: string };
+};
+
+export type AdminCategoryFormProps = {
+    admin: DashboardProps['admin'];
+    generatedAt: string;
+    category: null | {
+        id: number;
+        name: string;
+        description: string;
+        icon: string;
+    };
+};
+
+export type AdminCustomersProps = {
+    admin: DashboardProps['admin'];
+    generatedAt: string;
+    customers: AdminPagination<AdminCustomer>;
+    filters: { search: string };
+};
+
+export type AdminCustomerFormProps = {
+    admin: DashboardProps['admin'];
+    generatedAt: string;
+    customer: null | {
+        id: number;
+        name: string;
+        email: string;
+        phone: string;
+    };
+};

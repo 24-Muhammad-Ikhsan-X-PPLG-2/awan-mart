@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -61,7 +62,17 @@ class ProductsController extends Controller
         return Inertia::render('products', [
             'products' => $products
                 ->paginate(12)
-                ->withQueryString(),
+                ->withQueryString()
+                ->through(function (Product $product): Product {
+                    $product->product_images->each(function (ProductImage $image): void {
+                        $image->setAttribute(
+                            'image',
+                            $this->imageUrl($image->getRawOriginal('image'))
+                        );
+                    });
+
+                    return $product;
+                }),
             'categories' => Category::query()
                 ->orderBy('name')
                 ->get(['id', 'name']),
@@ -101,8 +112,19 @@ class ProductsController extends Controller
             'name' => $product->name,
             'slug' => $product->slug,
             'price' => $product->price,
-            'image' => $product->product_images->first()?->image,
+            'image' => $this->imageUrl($product->product_images->first()?->image),
             'category' => $product->category?->name
         ]));
+    }
+
+    private function imageUrl(?string $path): ?string
+    {
+        if ($path === null || $path === '') {
+            return null;
+        }
+
+        return str_starts_with($path, '/') || str_starts_with($path, 'http')
+            ? $path
+            : asset('storage/'.$path);
     }
 }

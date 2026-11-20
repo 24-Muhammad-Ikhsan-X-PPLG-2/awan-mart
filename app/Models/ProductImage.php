@@ -17,6 +17,17 @@ class ProductImage extends Model
 {
     protected $table = 'product_images';
 
+    public function getImageAttribute(?string $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return $value;
+        }
+
+        return str_starts_with($value, '/') || str_starts_with($value, 'http')
+            ? $value
+            : asset('storage/'.$value);
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
