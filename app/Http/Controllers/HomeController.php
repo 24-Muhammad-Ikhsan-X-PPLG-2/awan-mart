@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Review;
 use Inertia\Inertia;
 
 /**
@@ -39,11 +40,52 @@ class HomeController extends Controller
         // Load relasi yang diperlukan supaya frontend bisa menampilkan data lengkap.
         $product->load([
             'category',
-            'product_images'
+            'product_images',
         ]);
 
+        $reviews = $product->reviews()
+            ->with('user.pelanggan')
+            ->latest()
+            ->get()
+            ->map(function (Review $review) {
+                $name = $review->user->pelanggan?->name ?? 'Pelanggan';
+                $initials = collect(preg_split('/\s+/', trim($name)) ?: [])
+                    ->filter()
+                    ->take(2)
+                    ->map(fn (string $part) => mb_substr($part, 0, 1))
+                    ->implode('');
+
+                return [
+                    'id' => (string) $review->id,
+                    'name' => $name,
+                    'initials' => mb_strtoupper($initials),
+                    'avatarColor' => 'bg-[#526B91]',
+                    'rating' => $review->rating,
+                    'date' => $review->created_at?->toISOString() ?? '',
+                    'title' => $review->title,
+                    'content' => $review->content,
+                    'images' => collect($review->images ?? [])
+                        ->map(fn (string $path) => asset('storage/'.$path))
+                        ->all(),
+                ];
+            });
+        $totalReviews = $reviews->count();
+        $distribution = collect(range(1, 5))
+            ->mapWithKeys(fn (int $rating) => [
+                $rating => $reviews->where('rating', $rating)->count(),
+            ])
+            ->all();
+
         return Inertia::render('product_detail', [
-            'product' => $product
+            'product' => $product,
+            'reviews' => $reviews,
+            'reviewSummary' => [
+                'total' => $totalReviews,
+                'average' => $totalReviews
+                    ? $reviews->sum('rating') / $totalReviews
+                    : 0,
+                'distribution' => $distribution,
+            ],
         ]);
     }
 }

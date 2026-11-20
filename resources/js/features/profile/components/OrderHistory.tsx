@@ -1,5 +1,6 @@
 import { formatPrice } from '@/lib/utils';
 import { Link, router } from '@inertiajs/react';
+import RatingStars from '@/features/ProductDetail/reviews/RatingStars';
 import {
     ArrowRight,
     ArrowUpRight,
@@ -320,6 +321,39 @@ const OrderCard = ({ order }: { order: OrderData }) => {
 
             {isExpanded && (
                 <div className="space-y-4 border-t border-[#E2E6ED] bg-[#FCFCFD] px-4 py-5 sm:px-5">
+                    {order.status === 'completed' && (
+                        <section className="space-y-4">
+                            <h3 className="text-xs font-semibold tracking-wide text-[#526B91] uppercase">
+                                Ulasan Produk
+                            </h3>
+                            {order.order_items.map((item) => {
+                                const review = order.reviews.find(
+                                    (entry) => entry.product_id === item.product_id,
+                                );
+
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className="rounded-lg border border-[#E2E6ED] bg-white p-4"
+                                    >
+                                        <p className="mb-3 text-sm font-semibold text-[#203452]">
+                                            {item.product?.name ?? 'Produk'}
+                                        </p>
+                                        {review ? (
+                                            <p className="text-sm font-medium text-emerald-700">
+                                                Ulasan sudah dikirim.
+                                            </p>
+                                        ) : (
+                                            <OrderReviewForm
+                                                orderId={order.id}
+                                                productId={item.product_id}
+                                            />
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </section>
+                    )}
                     <div>
                         <h3 className="text-xs font-semibold tracking-wide text-[#526B91] uppercase">
                             Alamat Pengiriman
@@ -379,11 +413,124 @@ const OrderCard = ({ order }: { order: OrderData }) => {
     );
 };
 
-const OrderItemRow = ({
-    item,
+const OrderReviewForm = ({
+    orderId,
+    productId,
 }: {
-    item: OrderData['order_items'][number];
-}) => (
+    orderId: number;
+    productId: number;
+}) => {
+    const [rating, setRating] = useState(0);
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const submitReview = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!rating) {
+            setErrors((current) => ({
+                ...current,
+                rating: 'Pilih rating terlebih dahulu.',
+            }));
+            return;
+        }
+
+        router.post(
+            '/reviews',
+            {
+                order_id: orderId,
+                product_id: productId,
+                rating,
+                title,
+                content,
+            },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setRating(0);
+                    setTitle('');
+                    setContent('');
+                    setErrors({});
+                },
+                onError: (validationErrors) => setErrors(validationErrors),
+            },
+        );
+    };
+
+    return (
+        <form onSubmit={submitReview} className="space-y-3">
+            <div>
+                <p className="mb-1.5 text-xs font-semibold text-[#526B91]">
+                    Rating
+                </p>
+                <RatingStars
+                    value={rating}
+                    interactive
+                    size={22}
+                    onChange={(value) => {
+                        setRating(value);
+                        setErrors((current) => ({ ...current, rating: '' }));
+                    }}
+                />
+                {errors.rating && (
+                    <p className="mt-1 text-xs text-red-600">{errors.rating}</p>
+                )}
+            </div>
+            <label className="block">
+                <span className="text-xs font-semibold text-[#526B91]">
+                    Judul ulasan
+                </span>
+                <input
+                    value={title}
+                    maxLength={150}
+                    onChange={(event) => {
+                        setTitle(event.target.value);
+                        setErrors((current) => ({ ...current, title: '' }));
+                    }}
+                    className="mt-1.5 h-10 w-full rounded-lg border border-[#D0D5DD] px-3 text-sm outline-none focus:border-[#526B91] focus:ring-2 focus:ring-[#526B91]/10"
+                    placeholder="Bagaimana pengalamanmu?"
+                />
+                {errors.title && (
+                    <span className="mt-1 block text-xs text-red-600">
+                        {errors.title}
+                    </span>
+                )}
+            </label>
+            <label className="block">
+                <span className="text-xs font-semibold text-[#526B91]">
+                    Ceritakan pengalamanmu
+                </span>
+                <textarea
+                    value={content}
+                    maxLength={2000}
+                    onChange={(event) => {
+                        setContent(event.target.value);
+                        setErrors((current) => ({ ...current, content: '' }));
+                    }}
+                    rows={4}
+                    className="mt-1.5 w-full resize-y rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm leading-6 outline-none focus:border-[#526B91] focus:ring-2 focus:ring-[#526B91]/10"
+                    placeholder="Bagikan kualitas dan pengalaman penggunaan produk."
+                />
+                <span className="mt-1 block text-right text-xs text-[#667085]">
+                    {content.length}/2000
+                </span>
+                {errors.content && (
+                    <span className="mt-1 block text-xs text-red-600">
+                        {errors.content}
+                    </span>
+                )}
+            </label>
+            <button
+                type="submit"
+                className="inline-flex min-h-10 items-center rounded-lg bg-[#203452] px-4 text-xs font-semibold text-white transition hover:bg-[#314D73] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+                Kirim Ulasan
+            </button>
+        </form>
+    );
+};
+
+const OrderItemRow = ({ item }: { item: OrderData['order_items'][number] }) => (
     <div className="flex items-center gap-3">
         <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#E2E6ED] bg-[#F8F9FC]">
             {item.product?.product_images?.[0]?.image ? (

@@ -1,5 +1,5 @@
 import Navbar from "@/components/navbar";
-import { ProductType } from "@/types/types";
+import { Pagination, ProductType } from "@/types/types";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart-store";
 import { Link, router } from "@inertiajs/react";
@@ -17,18 +17,6 @@ import { FormEvent, useState } from "react";
 type CategoryOption = {
     id: number;
     name: string;
-};
-
-type Pagination<T> = {
-    data: T[];
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-    from: number | null;
-    to: number | null;
-    prev_page_url: string | null;
-    next_page_url: string | null;
 };
 
 type Filters = {
@@ -90,7 +78,7 @@ const ProductsPage = ({ products, categories, filters }: Props) => {
                     <p className="text-xs font-bold tracking-[0.25em] text-[#526B91]">
                         KATALOG AWANMART
                     </p>
-                    <h1 className="mt-2 font-playfair text-3xl font-bold text-[#203452] sm:text-4xl">
+                    <h1 className="font-playfair mt-2 text-3xl font-bold text-[#203452] sm:text-4xl">
                         Jelajahi Semua Produk
                     </h1>
                     <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#718096]">
@@ -113,7 +101,7 @@ const ProductsPage = ({ products, categories, filters }: Props) => {
                             <span className="sr-only">Cari produk</span>
                             <Search
                                 size={17}
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-[#98A2B3]"
+                                className="absolute top-1/2 left-3 -translate-y-1/2 text-[#98A2B3]"
                             />
                             <input
                                 type="search"
@@ -122,7 +110,7 @@ const ProductsPage = ({ products, categories, filters }: Props) => {
                                     setQuery(event.target.value)
                                 }
                                 placeholder="Cari nama atau deskripsi produk"
-                                className="h-11 w-full rounded-lg border border-[#E2E6ED] bg-white pl-10 pr-3 text-sm text-[#203452] outline-none transition placeholder:text-[#98A2B3] focus:border-[#526B91] focus:ring-2 focus:ring-[#526B91]/10"
+                                className="h-11 w-full rounded-lg border border-[#E2E6ED] bg-white pr-3 pl-10 text-sm text-[#203452] transition outline-none placeholder:text-[#98A2B3] focus:border-[#526B91] focus:ring-2 focus:ring-[#526B91]/10"
                             />
                         </label>
 
@@ -338,7 +326,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
                 )}
             </Link>
             <div className="flex flex-1 flex-col p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-[#98A2B3]">
+                <p className="text-[11px] font-semibold tracking-wider text-[#98A2B3] uppercase">
                     {product.category.name}
                 </p>
                 <Link

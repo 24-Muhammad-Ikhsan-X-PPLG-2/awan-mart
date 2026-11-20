@@ -1,11 +1,4 @@
-import {
-    Search,
-    ShoppingCart,
-    UserRound,
-    X,
-    Menu,
-    ArrowRight,
-} from "lucide-react";
+import { ShoppingCart, UserRound, X, Menu, LogOut } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { appName } from "@/constant";
@@ -32,21 +25,32 @@ const Navbar: FC<Props> = ({ activePage }) => {
         const csrfToken = document.querySelector<HTMLMetaElement>(
             'meta[name="csrf-token"]',
         )?.content;
-        (async () => {
-            const res = await fetch("/cart/count");
-            const data = await res.json();
-            const response = await fetch("/categories/get", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    "X-CSRF-TOKEN": csrfToken ?? "",
-                },
-            });
-            const dataCategories = await response.json();
-            if (mounted) {
-                setCartCount(data);
-                setCategories(dataCategories.categories);
+        void (async () => {
+            try {
+                const res = await fetch("/cart/count");
+                const data = await res.json();
+                const response = await fetch("/categories/get", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                        "X-CSRF-TOKEN": csrfToken ?? "",
+                    },
+                });
+                const dataCategories = await response.json();
+                if (mounted) {
+                    setCartCount(data);
+                    setCategories(dataCategories.categories);
+                }
+            } catch (error) {
+                if (error instanceof Error) {
+                    console.error(
+                        `Failed to fetch navbar data : ${error.message}`,
+                    );
+                } else {
+                    console.error(`Failed to fetch navbar data`);
+                    console.error(error);
+                }
             }
         })();
         return () => {
@@ -77,14 +81,14 @@ const Navbar: FC<Props> = ({ activePage }) => {
                                 <Link href={"/cart"}>
                                     <button
                                         type="button"
-                                        className="group relative flex size-10 items-center justify-center rounded-full text-[#203452] transition-colors cursor-pointer hover:bg-[#F1F3F7]"
+                                        className="group relative flex size-10 cursor-pointer items-center justify-center rounded-full text-[#203452] transition-colors hover:bg-[#F1F3F7]"
                                     >
                                         <ShoppingCart
                                             size={21}
                                             strokeWidth={1.7}
                                         />
 
-                                        <span className="absolute right-0.5 top-0.5 flex size-4.25 items-center justify-center rounded-full bg-[#203452] text-[9px] font-semibold text-white transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">
+                                        <span className="absolute top-0.5 right-0.5 flex size-4.25 items-center justify-center rounded-full bg-[#203452] text-[9px] font-semibold text-white transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1">
                                             {cartCount}
                                         </span>
                                     </button>
@@ -96,6 +100,12 @@ const Navbar: FC<Props> = ({ activePage }) => {
                                     className="flex size-10 items-center justify-center rounded-full border border-[#E2E6ED] text-[#203452] transition-all hover:border-[#203452] hover:bg-[#F1F3F7]"
                                 >
                                     <UserRound size={19} strokeWidth={1.7} />
+                                </Link>
+                                <Link
+                                    href={"/auth/logout"}
+                                    className="text-gray-700"
+                                >
+                                    <LogOut size={24} />
                                 </Link>
                             </>
                         ) : (
@@ -119,16 +129,25 @@ const Navbar: FC<Props> = ({ activePage }) => {
                     {/* Mobile */}
                     <div className="flex items-center gap-2 lg:hidden">
                         {user && (
-                            <Link
-                                href="/cart"
-                                aria-label="Keranjang belanja"
-                                className="relative flex size-10 items-center justify-center rounded-full text-[#203452] hover:bg-[#F1F3F7]"
-                            >
-                                <ShoppingCart size={21} strokeWidth={1.7} />
-                                <span className="absolute right-0.5 top-0.5 flex size-4 items-center justify-center rounded-full bg-[#203452] text-[9px] font-semibold text-white">
-                                    {cartCount}
-                                </span>
-                            </Link>
+                            <>
+                                <Link
+                                    href="/cart"
+                                    aria-label="Keranjang belanja"
+                                    className="relative flex size-10 items-center justify-center rounded-full text-[#203452] hover:bg-[#F1F3F7]"
+                                >
+                                    <ShoppingCart size={21} strokeWidth={1.7} />
+                                    <span className="absolute top-0.5 right-0.5 flex size-4 items-center justify-center rounded-full bg-[#203452] text-[9px] font-semibold text-white">
+                                        {cartCount}
+                                    </span>
+                                </Link>
+                                <Link
+                                    href="/profile"
+                                    aria-label="Akun pengguna"
+                                    className="flex size-10 items-center justify-center rounded-full border border-[#E2E6ED] text-[#203452] transition-all hover:border-[#203452] hover:bg-[#F1F3F7]"
+                                >
+                                    <UserRound size={19} strokeWidth={1.7} />
+                                </Link>
+                            </>
                         )}
 
                         <button

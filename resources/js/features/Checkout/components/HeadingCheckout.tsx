@@ -1,7 +1,7 @@
 const HeadingCheckout = () => {
     return (
         <div className="mb-8">
-            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#526B91]">
+            <p className="mb-1 text-xs font-semibold tracking-[0.2em] text-[#526B91] uppercase">
                 Almost yours
             </p>
             <h1 className="font-playfair text-3xl font-bold text-[#203452] sm:text-4xl">

@@ -1,14 +1,14 @@
-import type { ClassValue } from "clsx";
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import type { ClassValue } from 'clsx';
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
 export const formatPrice = (price: number) =>
-    new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
+    new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
         maximumFractionDigits: 0,
     }).format(price);

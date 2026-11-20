@@ -1,30 +1,30 @@
-import { Link, router } from '@inertiajs/react';
-import { Package, Search } from 'lucide-react';
-import { useState, type FormEvent } from 'react';
-import SupplierStatusBadge from './SupplierStatusBadge';
+import { Link, router } from "@inertiajs/react";
+import { Package, Search } from "lucide-react";
+import { useState, type FormEvent } from "react";
+import SupplierStatusBadge from "./SupplierStatusBadge";
 import type {
     SupplierProcurementIndexProps,
     SupplierProcurementStatus,
-} from '../types';
+} from "../types";
 
 const statusLabels: Record<SupplierProcurementStatus, string> = {
-    pending: 'Menunggu respons',
-    approved: 'Diterima / diproses',
-    rejected: 'Ditolak',
-    shipped: 'Dikirim',
-    completed: 'Selesai',
+    pending: "Menunggu respons",
+    approved: "Diterima / diproses",
+    rejected: "Ditolak",
+    shipped: "Dikirim",
+    completed: "Selesai",
 };
 
-const numberFormat = new Intl.NumberFormat('id-ID');
-const currencyFormat = new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
+const numberFormat = new Intl.NumberFormat("id-ID");
+const currencyFormat = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
     maximumFractionDigits: 0,
 });
-const dateFormat = new Intl.DateTimeFormat('id-ID', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
+const dateFormat = new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
 });
 
 const SupplierProcurementList = ({
@@ -33,16 +33,16 @@ const SupplierProcurementList = ({
     procurements,
 }: Pick<
     SupplierProcurementIndexProps,
-    'filters' | 'statusCounts' | 'procurements'
+    "filters" | "statusCounts" | "procurements"
 >) => {
     const [search, setSearch] = useState(filters.search);
-    const currentCount = (status: SupplierProcurementStatus) =>
+    const _currentCount = (status: SupplierProcurementStatus) =>
         statusCounts.find((item) => item.value === status)?.count ?? 0;
     const submitSearch = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         router.get(
-            '/supplier/procurements',
-            { search, status: filters.status ?? '' },
+            "/supplier/procurements",
+            { search, status: filters.status ?? "" },
             { preserveState: true, preserveScroll: true, replace: true },
         );
     };
@@ -130,7 +130,7 @@ const SupplierProcurementList = ({
                                             <span className="mt-1 block text-[10px] font-normal text-[#A8A29E]">
                                                 {numberFormat.format(
                                                     procurement.totalQuantity,
-                                                )}{' '}
+                                                )}{" "}
                                                 unit
                                             </span>
                                         </th>
@@ -142,7 +142,7 @@ const SupplierProcurementList = ({
                                         <td className="px-4 py-4 text-xs text-[#57534E]">
                                             {numberFormat.format(
                                                 procurement.itemsCount,
-                                            )}{' '}
+                                            )}{" "}
                                             jenis
                                         </td>
                                         <td className="px-4 py-4 text-xs font-medium whitespace-nowrap text-[#44403C]">
@@ -193,11 +193,11 @@ const SupplierProcurementList = ({
                                     <span className="text-[#78716C]">
                                         {numberFormat.format(
                                             procurement.itemsCount,
-                                        )}{' '}
-                                        jenis ·{' '}
+                                        )}{" "}
+                                        jenis ·{" "}
                                         {numberFormat.format(
                                             procurement.totalQuantity,
-                                        )}{' '}
+                                        )}{" "}
                                         unit
                                     </span>
                                     <span className="font-semibold text-[#44403C]">
@@ -227,13 +227,13 @@ const SupplierProcurementList = ({
                     </span>
                     <h3 className="mt-4 text-sm font-semibold text-[#44403C]">
                         {filters.search || filters.status
-                            ? 'Permintaan tidak ditemukan'
-                            : 'Belum ada permintaan pengadaan'}
+                            ? "Permintaan tidak ditemukan"
+                            : "Belum ada permintaan pengadaan"}
                     </h3>
                     <p className="mx-auto mt-1 max-w-sm text-xs leading-5 text-[#78716C]">
                         {filters.search || filters.status
-                            ? 'Coba ubah pencarian atau filter status.'
-                            : 'Permintaan dari AwanMart akan muncul di halaman ini.'}
+                            ? "Coba ubah pencarian atau filter status."
+                            : "Permintaan dari AwanMart akan muncul di halaman ini."}
                     </p>
                 </div>
             )}
@@ -248,25 +248,25 @@ const SupplierProcurementList = ({
                         {procurements.links.map((link, index) => (
                             <Link
                                 key={`${link.label}-${index}`}
-                                href={link.url ?? '#'}
+                                href={link.url ?? "#"}
                                 preserveScroll
                                 aria-disabled={!link.url}
-                                aria-current={link.active ? 'page' : undefined}
+                                aria-current={link.active ? "page" : undefined}
                                 className={`flex min-h-8 min-w-8 items-center justify-center rounded-md px-2 text-[11px] ${
                                     link.active
-                                        ? 'bg-[#F97316] font-semibold text-white'
+                                        ? "bg-[#F97316] font-semibold text-white"
                                         : link.url
-                                          ? 'text-[#78716C] hover:bg-[#FFF7ED] hover:text-[#EA580C]'
-                                          : 'cursor-not-allowed text-[#D6D3D1]'
+                                          ? "text-[#78716C] hover:bg-[#FFF7ED] hover:text-[#EA580C]"
+                                          : "cursor-not-allowed text-[#D6D3D1]"
                                 }`}
                                 onClick={(event) => {
                                     if (!link.url) event.preventDefault();
                                 }}
                             >
                                 {link.label
-                                    .replace('&laquo; Previous', '‹')
-                                    .replace('Next &raquo;', '›')
-                                    .replace(/<[^>]*>/g, '')}
+                                    .replace("&laquo; Previous", "‹")
+                                    .replace("Next &raquo;", "›")
+                                    .replace(/<[^>]*>/g, "")}
                             </Link>
                         ))}
                     </div>
@@ -289,7 +289,7 @@ const FilterLink = ({
     href: string;
     search: string;
 }) => {
-    const separator = href.includes('?') ? '&' : '?';
+    const separator = href.includes("?") ? "&" : "?";
     const target = search
         ? `${href}${separator}search=${encodeURIComponent(search)}`
         : href;
@@ -300,8 +300,8 @@ const FilterLink = ({
             preserveScroll
             className={`inline-flex min-h-8 shrink-0 items-center gap-1.5 rounded-lg border px-3 text-[10px] font-medium transition ${
                 active
-                    ? 'border-[#FDBA74] bg-[#FFF7ED] text-[#C2410C]'
-                    : 'border-transparent bg-[#F5F5F4] text-[#78716C] hover:border-[#E7E5E4] hover:bg-white'
+                    ? "border-[#FDBA74] bg-[#FFF7ED] text-[#C2410C]"
+                    : "border-transparent bg-[#F5F5F4] text-[#78716C] hover:border-[#E7E5E4] hover:bg-white"
             }`}
         >
             {label}

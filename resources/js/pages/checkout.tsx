@@ -1,11 +1,11 @@
-import { useMemo, useState } from "react";
-import { router } from "@inertiajs/react";
-import Navbar from "@/components/navbar";
-import Breadcrumb from "@/features/Checkout/components/breadcrumb";
-import HeadingCheckout from "@/features/Checkout/components/HeadingCheckout";
-import EmptyCheckout from "@/features/Checkout/components/EmptyCheckout";
-import CheckoutContent from "@/features/Checkout/components/CheckoutContent";
-import { Address, CheckoutItem } from "@/types/types";
+import { useMemo, useState } from 'react';
+import { router } from '@inertiajs/react';
+import Navbar from '@/components/navbar';
+import Breadcrumb from '@/features/Checkout/components/breadcrumb';
+import HeadingCheckout from '@/features/Checkout/components/HeadingCheckout';
+import EmptyCheckout from '@/features/Checkout/components/EmptyCheckout';
+import CheckoutContent from '@/features/Checkout/components/CheckoutContent';
+import { Address, CheckoutItem } from '@/types/types';
 
 type CheckoutProps = {
     items: CheckoutItem[];
@@ -55,19 +55,19 @@ const CheckoutPage = ({
         try {
             if (!window.snap) {
                 throw new Error(
-                    "Layanan pembayaran belum siap. Silakan coba lagi.",
+                    'Layanan pembayaran belum siap. Silakan coba lagi.',
                 );
             }
 
             const csrfToken = document.querySelector<HTMLMetaElement>(
                 'meta[name="csrf-token"]',
             )?.content;
-            const response = await fetch("/checkout/store", {
-                method: "POST",
+            const response = await fetch('/checkout/store', {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    "X-CSRF-TOKEN": csrfToken ?? "",
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': csrfToken ?? '',
                 },
                 body: JSON.stringify({
                     shipping_address: address.address,
@@ -83,18 +83,18 @@ const CheckoutPage = ({
                 data = (await response.json()) as CheckoutResponse;
             } catch {
                 throw new Error(
-                    "Server tidak memberikan respons pembayaran yang valid. Silakan coba lagi.",
+                    'Server tidak memberikan respons pembayaran yang valid. Silakan coba lagi.',
                 );
             }
 
             if (!response.ok) {
                 throw new Error(
-                    data.message ?? "Pesanan tidak dapat diproses.",
+                    data.message ?? 'Pesanan tidak dapat diproses.',
                 );
             }
             if (!data.data?.snap_token || !data.data.order_number) {
                 throw new Error(
-                    "Informasi pembayaran tidak lengkap. Silakan coba lagi.",
+                    'Informasi pembayaran tidak lengkap. Silakan coba lagi.',
                 );
             }
             const snapToken = data.data.snap_token;
@@ -104,13 +104,13 @@ const CheckoutPage = ({
                 onSuccess: async () => {
                     try {
                         const confirmationResponse = await fetch(
-                            "/checkout/confirm-payment",
+                            '/checkout/confirm-payment',
                             {
-                                method: "POST",
+                                method: 'POST',
                                 headers: {
-                                    "Content-Type": "application/json",
-                                    Accept: "application/json",
-                                    "X-CSRF-TOKEN": csrfToken ?? "",
+                                    'Content-Type': 'application/json',
+                                    Accept: 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken ?? '',
                                 },
                                 body: JSON.stringify({
                                     order_number: orderNumber,
@@ -123,7 +123,7 @@ const CheckoutPage = ({
                         if (!confirmationResponse.ok) {
                             throw new Error(
                                 confirmation.message ??
-                                    "Pembayaran berhasil, tetapi status pesanan belum dapat diperbarui. Silakan muat ulang beberapa saat lagi.",
+                                    'Pembayaran berhasil, tetapi status pesanan belum dapat diperbarui. Silakan muat ulang beberapa saat lagi.',
                             );
                         }
 
@@ -134,7 +134,7 @@ const CheckoutPage = ({
                         setCheckoutError(
                             error instanceof Error
                                 ? error.message
-                                : "Pembayaran berhasil, tetapi status pesanan belum dapat diperbarui. Silakan muat ulang beberapa saat lagi.",
+                                : 'Pembayaran berhasil, tetapi status pesanan belum dapat diperbarui. Silakan muat ulang beberapa saat lagi.',
                         );
                         setIsSubmitting(false);
                     }
@@ -145,7 +145,7 @@ const CheckoutPage = ({
                     ),
                 onError: () => {
                     setCheckoutError(
-                        "Pembayaran belum berhasil. Pesanan tetap tersimpan dan bisa dicoba kembali.",
+                        'Pembayaran belum berhasil. Pesanan tetap tersimpan dan bisa dicoba kembali.',
                     );
                     setIsSubmitting(false);
                 },
@@ -159,7 +159,7 @@ const CheckoutPage = ({
             setCheckoutError(
                 error instanceof Error
                     ? error.message
-                    : "Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.",
+                    : 'Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.',
             );
             setIsSubmitting(false);
         }

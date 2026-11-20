@@ -1,15 +1,15 @@
-import Navbar from "@/components/navbar";
-import Breadcrumb from "@/features/Cart/components/breadcrumb";
-import Heading from "@/features/Cart/components/Heading";
-import CartContent from "@/features/Cart/components/CartContent";
-import OrderSummary from "@/features/Cart/components/OrderSummary";
-import EmptyCart from "@/features/Cart/components/EmptyCart";
-import useCart from "@/features/Cart/hooks/useCart";
-import { FC } from "react";
-import { CartItem } from "@/types/types";
-import { usePage } from "@inertiajs/react";
-import ErrorAlert from "@/features/Cart/components/ErrorAlert";
-import { AnimatePresence, motion } from "motion/react";
+import Navbar from '@/components/navbar';
+import Breadcrumb from '@/features/Cart/components/breadcrumb';
+import Heading from '@/features/Cart/components/Heading';
+import CartContent from '@/features/Cart/components/CartContent';
+import OrderSummary from '@/features/Cart/components/OrderSummary';
+import EmptyCart from '@/features/Cart/components/EmptyCart';
+import useCart from '@/features/Cart/hooks/useCart';
+import { FC } from 'react';
+import { CartItem } from '@/types/types';
+import { usePage } from '@inertiajs/react';
+import ErrorAlert from '@/features/Cart/components/ErrorAlert';
+import { AnimatePresence, motion } from 'motion/react';
 
 type Props = {
     dataCart: CartItem[];
@@ -57,7 +57,7 @@ const CartPage: FC<Props> = ({ dataCart }) => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_380px]"
-                            key={"cart-content"}
+                            key={'cart-content'}
                         >
                             {/* Cart Content */}
                             <CartContent

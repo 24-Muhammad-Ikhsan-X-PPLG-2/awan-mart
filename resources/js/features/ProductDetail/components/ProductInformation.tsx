@@ -1,17 +1,23 @@
-import { FC, useState } from "react";
-import { ProductType } from "../types/products";
-import Rating from "./Rating";
-import Price from "./Price";
-import Stock from "./Stock";
-import Quantity from "./Quantity";
-import Actions from "./Actions";
-import AdditionalInformation from "./AdditionalInformation";
+import { FC, useState } from 'react';
+import { ProductType } from '@/types/types';
+import Rating from './Rating';
+import Price from './Price';
+import Stock from './Stock';
+import Quantity from './Quantity';
+import Actions from './Actions';
+import AdditionalInformation from './AdditionalInformation';
 
 type Props = {
     product: ProductType;
+    averageRating: number;
+    reviewCount: number;
 };
 
-const ProductInformation: FC<Props> = ({ product }) => {
+const ProductInformation: FC<Props> = ({
+    product,
+    averageRating,
+    reviewCount,
+}) => {
     const [quantity, setQuantity] = useState(1);
 
     return (
@@ -22,12 +28,12 @@ const ProductInformation: FC<Props> = ({ product }) => {
             </p>
 
             {/* Product Name */}
-            <h1 className="mt-2 font-playfair text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
+            <h1 className="font-playfair mt-2 text-3xl leading-tight font-bold sm:text-4xl lg:text-5xl">
                 {product.name}
             </h1>
 
             {/* Rating */}
-            <Rating />
+            <Rating average={averageRating} total={reviewCount} />
 
             <div className="my-6 border-t border-[#E2E6ED]" />
 

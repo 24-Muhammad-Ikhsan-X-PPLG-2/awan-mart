@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { AlertCircle, X } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 type Props = {
     errors: Record<string, string>;

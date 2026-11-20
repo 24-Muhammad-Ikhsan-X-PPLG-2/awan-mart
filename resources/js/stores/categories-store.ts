@@ -1,5 +1,5 @@
-import { Category } from "@/types/types";
-import { create } from "zustand";
+import { Category } from '@/types/types';
+import { create } from 'zustand';
 
 type CategoriesState = {
     categories: Category[] | null;

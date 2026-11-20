@@ -9,6 +9,7 @@ export type ProfileData = {
 
 export type OrderItem = {
     id: number;
+    product_id: number;
     quantity: number;
     price: string;
     product: ProductType | null;
@@ -27,6 +28,10 @@ export type OrderData = {
         | 'canceled';
     created_at: string;
     order_items: OrderItem[];
+    reviews: {
+        id: number;
+        product_id: number;
+    }[];
     payment: {
         provider: string;
         provider_order_id: string;

@@ -1,6 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import 'tailwindcss';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -13,11 +13,11 @@
 } */
 
 body {
-    font-family: "Inter", sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 .font-playfair {
-    font-family: "Playfair Display", serif;
+    font-family: 'Playfair Display', serif;
 }
 
 .loader {
@@ -44,7 +44,7 @@ body {
 }
 .loader::before,
 .loader::after {
-    content: "";
+    content: '';
     grid-area: 1/1;
     border-radius: 50%;
     background: inherit;

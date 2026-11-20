@@ -1,5 +1,5 @@
-import { Link } from "@inertiajs/react";
-import { ArrowRight, ShoppingBag } from "lucide-react";
+import { Link } from '@inertiajs/react';
+import { ArrowRight, ShoppingBag } from 'lucide-react';
 
 const EmptyCart = () => {
     return (

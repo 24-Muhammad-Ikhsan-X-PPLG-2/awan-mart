@@ -1,6 +1,6 @@
-import { ArrowRight, Sparkles, Tag } from "lucide-react";
-import { Link } from "@inertiajs/react";
-import { appName } from "@/constant";
+import { ArrowRight, Sparkles, Tag } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { appName } from '@/constant';
 
 const CTASection = () => {
     return (
@@ -11,9 +11,9 @@ const CTASection = () => {
             <div className="relative isolate overflow-hidden rounded-2xl bg-[#203452] px-6 py-10 text-white shadow-lg sm:px-10 sm:py-12 lg:px-14 lg:py-14">
                 {/* Dekorasi simple */}
                 <div className="pointer-events-none absolute inset-0 -z-10">
-                    <div className="absolute -right-20 -top-32 h-80 w-80 rounded-full border border-white/10" />
-                    <div className="absolute -right-10 -top-20 h-60 w-60 rounded-full border border-white/10" />
-                    <div className="absolute -bottom-32 right-[20%] h-64 w-64 rounded-full bg-white/4 blur-3xl" />
+                    <div className="absolute -top-32 -right-20 h-80 w-80 rounded-full border border-white/10" />
+                    <div className="absolute -top-20 -right-10 h-60 w-60 rounded-full border border-white/10" />
+                    <div className="absolute right-[20%] -bottom-32 h-64 w-64 rounded-full bg-white/4 blur-3xl" />
                 </div>
 
                 <div className="relative flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
@@ -26,7 +26,7 @@ const CTASection = () => {
                             </span>
                         </div>
 
-                        <h2 className="font-playfair text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
+                        <h2 className="font-playfair text-3xl leading-tight font-bold sm:text-4xl lg:text-5xl">
                             Teknologi Pilihan,
                             <br />
                             <span className="text-[#B8C8DF]">
@@ -65,7 +65,7 @@ const CTASection = () => {
                                 <span className="text-xs font-semibold tracking-[0.2em] text-white/70">
                                     AWANMART
                                 </span>
-                                <span className="mt-1 font-playfair text-xl font-bold lg:text-2xl">
+                                <span className="font-playfair mt-1 text-xl font-bold lg:text-2xl">
                                     Special
                                 </span>
                             </div>

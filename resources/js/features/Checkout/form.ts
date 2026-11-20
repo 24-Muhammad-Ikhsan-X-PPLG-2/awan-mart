@@ -1,4 +1,4 @@
-import z, { string } from "zod";
+import z from "zod";
 
 export const formAddress = z.object({
     recipient_name: z.string(),

@@ -1,6 +1,6 @@
-import { Address } from "@/types/types";
-import { AnimatePresence, motion } from "motion/react";
-import { FC, useEffect, useState } from "react";
+import { Address } from '@/types/types';
+import { AnimatePresence, motion } from 'motion/react';
+import { FC, useEffect, useState } from 'react';
 import {
     AlertCircle,
     MapPin,
@@ -11,10 +11,10 @@ import {
     Building2,
     Hash,
     LoaderCircle,
-} from "lucide-react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { formAddress, TypeFormAddress } from "../form";
+} from 'lucide-react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { formAddress, TypeFormAddress } from '../form';
 
 type Props = {
     address: Address | null;
@@ -27,12 +27,12 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
     const { register, handleSubmit } = useForm<TypeFormAddress>({
         resolver: zodResolver(formAddress),
         defaultValues: {
-            address: address?.address ?? "",
-            city: address?.city ?? "",
-            phone: address?.phone ?? "",
-            postal_code: address?.postal_code ?? "",
-            province: address?.province ?? "",
-            recipient_name: address?.recipient_name ?? "",
+            address: address?.address ?? '',
+            city: address?.city ?? '',
+            phone: address?.phone ?? '',
+            postal_code: address?.postal_code ?? '',
+            province: address?.province ?? '',
+            recipient_name: address?.recipient_name ?? '',
         },
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,19 +47,19 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
     // Handle ESC key
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === "Escape") {
+            if (event.key === 'Escape') {
                 closeModal();
             }
         };
 
         if (isModalOpen) {
-            window.addEventListener("keydown", handleKeyDown);
-            document.body.style.overflow = "hidden";
+            window.addEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'hidden';
         }
 
         return () => {
-            window.removeEventListener("keydown", handleKeyDown);
-            document.body.style.overflow = "";
+            window.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = '';
         };
     }, [isModalOpen, isSubmitting]);
 
@@ -76,12 +76,12 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
             const csrfToken = document.querySelector<HTMLMetaElement>(
                 'meta[name="csrf-token"]',
             )?.content;
-            const response = await fetch("/user/address", {
-                method: "POST",
+            const response = await fetch('/user/address', {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                    "X-CSRF-TOKEN": csrfToken ?? "",
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': csrfToken ?? '',
                 },
                 body: JSON.stringify(dataForm),
             });
@@ -97,7 +97,7 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
                 };
             } catch {
                 throw new Error(
-                    "Server tidak memberikan respons yang valid. Silakan coba lagi.",
+                    'Server tidak memberikan respons yang valid. Silakan coba lagi.',
                 );
             }
 
@@ -106,13 +106,13 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
             if (
                 !response.ok ||
                 serverErrors.length > 0 ||
-                data.message !== "Successfully update address."
+                data.message !== 'Successfully update address.'
             ) {
                 setSubmitError(
                     serverErrors.length > 0
-                        ? serverErrors.join(" ")
+                        ? serverErrors.join(' ')
                         : (data.message ??
-                              "Alamat gagal disimpan. Silakan coba lagi."),
+                              'Alamat gagal disimpan. Silakan coba lagi.'),
                 );
                 return;
             }
@@ -123,7 +123,7 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
             setSubmitError(
                 error instanceof Error
                     ? error.message
-                    : "Terjadi kesalahan saat menyimpan alamat. Silakan coba lagi.",
+                    : 'Terjadi kesalahan saat menyimpan alamat. Silakan coba lagi.',
             );
         } finally {
             setIsSubmitting(false);
@@ -131,7 +131,7 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
     };
 
     const inputClass =
-        "w-full rounded-lg border border-[#E2E6ED] bg-white px-4 py-3 text-sm text-[#203452] outline-none transition placeholder:text-[#A0A8B5] focus:border-[#526B91] focus:ring-2 focus:ring-[#526B91]/10";
+        'w-full rounded-lg border border-[#E2E6ED] bg-white px-4 py-3 text-sm text-[#203452] outline-none transition placeholder:text-[#A0A8B5] focus:border-[#526B91] focus:ring-2 focus:ring-[#526B91]/10';
 
     return (
         <>
@@ -180,7 +180,7 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
                         </div>
 
                         <p className="text-sm leading-relaxed text-[#526B91]">
-                            {address.address}, {address.city},{" "}
+                            {address.address}, {address.city},{' '}
                             {address.province}, {address.postal_code}
                         </p>
                     </div>
@@ -250,8 +250,8 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
                                         className="font-serif text-2xl font-semibold text-[#203452]"
                                     >
                                         {address
-                                            ? "Ubah Alamat"
-                                            : "Tambah Alamat Baru"}
+                                            ? 'Ubah Alamat'
+                                            : 'Tambah Alamat Baru'}
                                     </h2>
 
                                     <p className="mt-1 text-xs text-[#98A2B3]">
@@ -306,7 +306,7 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
                                             maxLength={100}
                                             placeholder="Nama lengkap penerima"
                                             className={inputClass}
-                                            {...register("recipient_name")}
+                                            {...register('recipient_name')}
                                         />
                                     </div>
 
@@ -327,7 +327,7 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
                                             maxLength={20}
                                             placeholder="Contoh: 081234567890"
                                             className={inputClass}
-                                            {...register("phone")}
+                                            {...register('phone')}
                                         />
                                     </div>
 
@@ -348,7 +348,7 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
                                             maxLength={500}
                                             placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan, kecamatan, dan detail lainnya"
                                             className={`${inputClass} resize-none`}
-                                            {...register("address")}
+                                            {...register('address')}
                                         />
                                     </div>
 
@@ -370,7 +370,7 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
                                                 maxLength={100}
                                                 placeholder="Contoh: Jakarta Selatan"
                                                 className={inputClass}
-                                                {...register("city")}
+                                                {...register('city')}
                                             />
                                         </div>
 
@@ -389,7 +389,7 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
                                                 maxLength={100}
                                                 placeholder="Contoh: DKI Jakarta"
                                                 className={inputClass}
-                                                {...register("province")}
+                                                {...register('province')}
                                             />
                                         </div>
                                     </div>
@@ -413,7 +413,7 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
                                             maxLength={5}
                                             placeholder="Contoh: 12345"
                                             className={inputClass}
-                                            {...register("postal_code")}
+                                            {...register('postal_code')}
                                         />
                                     </div>
                                 </div>
@@ -443,7 +443,7 @@ const ShippingAddress: FC<Props> = ({ address, onAddAddress, setAddress }) => {
                                                 Menyimpan...
                                             </>
                                         ) : (
-                                            "Simpan Alamat"
+                                            'Simpan Alamat'
                                         )}
                                     </button>
                                 </div>

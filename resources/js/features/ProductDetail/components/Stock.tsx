@@ -1,5 +1,5 @@
-import { CheckCircle2 } from "lucide-react";
-import { FC } from "react";
+import { CheckCircle2 } from 'lucide-react';
+import { FC } from 'react';
 
 type Props = {
     stock: number;

@@ -1,5 +1,5 @@
-import React, { FC, useState } from "react";
-import { ImageProductType } from "../types/products";
+import React, { FC, useState } from 'react';
+import { ImageProductType } from '@/types/types';
 
 type Props = {
     productName: string;
@@ -29,8 +29,8 @@ const ProductGallery: FC<Props> = ({ productName, productImages }) => {
                         aria-pressed={activeImage === index}
                         className={`flex aspect-square w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border-2 bg-[#F1F3F7] p-2 transition-all sm:w-24 ${
                             activeImage === index
-                                ? "border-[#203452]"
-                                : "border-[#E2E6ED] hover:border-[#526B91]"
+                                ? 'border-[#203452]'
+                                : 'border-[#E2E6ED] hover:border-[#526B91]'
                         }`}
                     >
                         <img

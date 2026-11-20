@@ -1,7 +1,7 @@
-import { formatPrice } from "@/lib/utils";
-import { CartItem } from "../types/carts";
-import { FC } from "react";
-import { ArrowRight, ShieldCheck, Truck } from "lucide-react";
+import { formatPrice } from '@/lib/utils';
+import { CartItem } from '@/types/types';
+import { FC } from 'react';
+import { ArrowRight, ShieldCheck, Truck } from 'lucide-react';
 
 type Props = {
     selectedItems: CartItem[];

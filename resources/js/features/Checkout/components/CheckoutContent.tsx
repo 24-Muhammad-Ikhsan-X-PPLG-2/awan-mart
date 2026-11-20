@@ -1,9 +1,9 @@
-import { Address, CheckoutItem } from "@/types/types";
-import { FC } from "react";
-import ShippingAddress from "./ShippingAddress";
-import Products from "./Products";
-import PaymentMethod from "./PaymentMethod";
-import RightSummary from "./RightSummary";
+import { Address, CheckoutItem } from '@/types/types';
+import { FC } from 'react';
+import ShippingAddress from './ShippingAddress';
+import Products from './Products';
+import PaymentMethod from './PaymentMethod';
+import RightSummary from './RightSummary';
 
 type Props = {
     address: Address | null;

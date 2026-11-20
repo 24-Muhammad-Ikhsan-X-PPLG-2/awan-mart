@@ -1,14 +1,14 @@
-import { categories, navlinks } from "@/constant";
-import { FC, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { ChevronDown } from "lucide-react";
+import { categories, navlinks } from '@/constant';
+import { FC, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import { ChevronDown } from 'lucide-react';
 
 type Props = {
     onNavigate: () => void;
     activePage?: string;
 };
 
-const MobileNav: FC<Props> = ({ onNavigate, activePage = "beranda" }) => {
+const MobileNav: FC<Props> = ({ onNavigate, activePage = 'beranda' }) => {
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
     return (
@@ -16,7 +16,7 @@ const MobileNav: FC<Props> = ({ onNavigate, activePage = "beranda" }) => {
             {navlinks.map((item, index) => {
                 const isActive =
                     item.display.toLowerCase() === activePage.toLowerCase();
-                const isKategori = item.display === "Kategori";
+                const isKategori = item.display === 'Kategori';
 
                 return (
                     <motion.div
@@ -42,7 +42,7 @@ const MobileNav: FC<Props> = ({ onNavigate, activePage = "beranda" }) => {
                                     <ChevronDown
                                         size={17}
                                         className={`transition-transform duration-300 ${
-                                            isCategoryOpen ? "rotate-180" : ""
+                                            isCategoryOpen ? 'rotate-180' : ''
                                         }`}
                                     />
                                 </button>
@@ -52,7 +52,7 @@ const MobileNav: FC<Props> = ({ onNavigate, activePage = "beranda" }) => {
                                         <motion.div
                                             initial={{ height: 0, opacity: 0 }}
                                             animate={{
-                                                height: "auto",
+                                                height: 'auto',
                                                 opacity: 1,
                                             }}
                                             exit={{ height: 0, opacity: 0 }}
@@ -81,8 +81,8 @@ const MobileNav: FC<Props> = ({ onNavigate, activePage = "beranda" }) => {
                                 onClick={onNavigate}
                                 className={`flex items-center justify-between border-b border-[#F0F1F4] py-4 text-sm transition-colors hover:text-[#203452] ${
                                     isActive
-                                        ? "font-semibold text-[#203452]"
-                                        : "font-medium text-[#475467]"
+                                        ? 'font-semibold text-[#203452]'
+                                        : 'font-medium text-[#475467]'
                                 }`}
                             >
                                 {item.display}

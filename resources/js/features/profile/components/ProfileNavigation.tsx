@@ -1,8 +1,4 @@
-import {
-    CircleUserRound,
-    ShoppingBag,
-    UserRound,
-} from 'lucide-react';
+import { CircleUserRound, ShoppingBag, UserRound } from 'lucide-react';
 import { ProfileSection } from '../types';
 
 type Props = {

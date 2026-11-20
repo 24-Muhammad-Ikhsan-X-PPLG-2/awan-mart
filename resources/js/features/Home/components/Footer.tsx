@@ -1,7 +1,7 @@
-import { appName, navlinks } from "@/constant";
-import { ArrowRight, Mail } from "lucide-react";
-import { Link } from "@inertiajs/react";
-import type { ComponentProps, FC, FormEvent } from "react";
+import { appName, navlinks } from '@/constant';
+import { ArrowRight, Mail } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import type { ComponentProps, FC, FormEvent } from 'react';
 
 type BantuanType = {
     display: string;
@@ -9,10 +9,10 @@ type BantuanType = {
 };
 
 const bantuan: BantuanType[] = [
-    { display: "FAQ", href: "/help#faq" },
-    { display: "Pengiriman", href: "/help#pengiriman" },
-    { display: "Pembayaran", href: "/help#pembayaran" },
-    { display: "Kontak Kami", href: "/help#kontak" },
+    { display: 'FAQ', href: '/help#faq' },
+    { display: 'Pengiriman', href: '/help#pengiriman' },
+    { display: 'Pembayaran', href: '/help#pembayaran' },
+    { display: 'Kontak Kami', href: '/help#kontak' },
 ];
 
 const Footer = () => {
@@ -31,7 +31,7 @@ const Footer = () => {
                     <div>
                         <Link
                             href="/"
-                            className="inline-block font-playfair text-3xl font-bold tracking-tight transition-opacity hover:opacity-80"
+                            className="font-playfair inline-block text-3xl font-bold tracking-tight transition-opacity hover:opacity-80"
                         >
                             {appName}
                         </Link>
@@ -182,13 +182,13 @@ const SocialLink = ({ label, children }: SocialLinkProps) => (
     <a
         href="#"
         aria-label={label}
-        className="flex size-8 items-center justify-center rounded-lg transition-all duration-300 hover:-translate-y-1 text-white"
+        className="flex size-8 items-center justify-center rounded-lg text-white transition-all duration-300 hover:-translate-y-1"
     >
         {children}
     </a>
 );
 
-type PropsIcon = ComponentProps<"svg">;
+type PropsIcon = ComponentProps<'svg'>;
 
 const XIcon: FC<PropsIcon> = (props) => (
     <svg

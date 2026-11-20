@@ -1,7 +1,7 @@
-import { formatPrice } from "@/lib/utils";
-import { Search, X, LoaderCircle, PackageSearch } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { formatPrice } from '@/lib/utils';
+import { Search, X, LoaderCircle, PackageSearch } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useState } from 'react';
 
 type Product = {
     id: number;
@@ -13,7 +13,7 @@ type Product = {
 };
 
 const SearchInput = () => {
-    const [keyword, setKeyword] = useState("");
+    const [keyword, setKeyword] = useState('');
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
@@ -39,7 +39,7 @@ const SearchInput = () => {
                 );
 
                 if (!response.ok) {
-                    throw new Error("Failed to search products");
+                    throw new Error('Failed to search products');
                 }
 
                 const data: Product[] = await response.json();
@@ -47,7 +47,7 @@ const SearchInput = () => {
                 setProducts(data);
                 setIsOpen(true);
             } catch (error) {
-                if (error instanceof Error && error.name !== "AbortError") {
+                if (error instanceof Error && error.name !== 'AbortError') {
                     console.error(error);
                     setProducts([]);
                 }
@@ -65,7 +65,7 @@ const SearchInput = () => {
     }, [keyword]);
 
     const handleClear = () => {
-        setKeyword("");
+        setKeyword('');
         setProducts([]);
         setIsOpen(false);
     };
@@ -138,9 +138,9 @@ const SearchInput = () => {
                         exit={{ opacity: 0, y: 6, scale: 0.98 }}
                         transition={{
                             duration: 0.18,
-                            ease: "easeOut",
+                            ease: 'easeOut',
                         }}
-                        className="absolute left-0 top-full z-50 mt-2 w-full min-w-[300px] overflow-hidden rounded-xl border border-[#E2E6ED] bg-white shadow-[0_12px_35px_rgba(32,52,82,0.10)]"
+                        className="absolute top-full left-0 z-50 mt-2 w-full min-w-[300px] overflow-hidden rounded-xl border border-[#E2E6ED] bg-white shadow-[0_12px_35px_rgba(32,52,82,0.10)]"
                     >
                         <div className="border-b border-[#F0F1F4] px-4 py-3">
                             <p className="text-[10px] font-semibold tracking-[0.12em] text-[#98A2B3]">
@@ -189,7 +189,7 @@ const SearchInput = () => {
                                             </p>
 
                                             <p className="mt-1 text-[10px] text-[#98A2B3]">
-                                                {product.category ?? "Produk"}
+                                                {product.category ?? 'Produk'}
                                             </p>
 
                                             <p className="mt-1 text-xs font-semibold text-[#526B91]">

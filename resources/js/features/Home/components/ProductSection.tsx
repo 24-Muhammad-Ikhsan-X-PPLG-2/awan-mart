@@ -1,16 +1,16 @@
-import { ProductType } from "@/types/types";
-import { formatPrice } from "@/lib/utils";
-import { useCartStore } from "@/stores/cart-store";
-import { Link, router } from "@inertiajs/react";
+import { ProductType } from '@/types/types';
+import { formatPrice } from '@/lib/utils';
+import { useCartStore } from '@/stores/cart-store';
+import { Link, router } from '@inertiajs/react';
 import {
     ArrowRight,
     Check,
     LoaderCircle,
     ShoppingCart,
     Star,
-} from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-import { FC, useEffect, useRef, useState } from "react";
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { FC, useEffect, useRef, useState } from 'react';
 
 type Props = {
     products: ProductType[];
@@ -28,7 +28,7 @@ const ProductSection: FC<Props> = ({ products }) => {
                         PRODUK UNGGULAN
                     </p>
 
-                    <h2 className="mt-2 font-playfair text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl">
+                    <h2 className="font-playfair mt-2 text-2xl leading-tight font-bold sm:text-3xl lg:text-4xl">
                         Pilihan Terbaik untuk Anda
                     </h2>
 
@@ -65,10 +65,10 @@ type CardProductProps = {
     product: ProductType;
 };
 
-type ButtonStatus = "idle" | "loading" | "success";
+type ButtonStatus = 'idle' | 'loading' | 'success';
 
 const CardProduct = ({ product }: CardProductProps) => {
-    const [status, setStatus] = useState<ButtonStatus>("idle");
+    const [status, setStatus] = useState<ButtonStatus>('idle');
     const { incrementCount } = useCartStore();
 
     const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -81,10 +81,10 @@ const CardProduct = ({ product }: CardProductProps) => {
         };
     }, []);
     const handleAddToCart = () => {
-        if (status !== "idle" || product.stock <= 0) return;
+        if (status !== 'idle' || product.stock <= 0) return;
 
         router.post(
-            "/cart/item",
+            '/cart/item',
             {
                 product_id: product.id,
                 quantity: 1,
@@ -94,38 +94,38 @@ const CardProduct = ({ product }: CardProductProps) => {
                 preserveScroll: true,
 
                 onStart: () => {
-                    setStatus("loading");
+                    setStatus('loading');
                 },
 
                 onSuccess: () => {
-                    setStatus("success");
+                    setStatus('success');
                     incrementCount(1);
                     timeoutRef.current = setTimeout(() => {
-                        setStatus("idle");
+                        setStatus('idle');
                     }, 2200);
                 },
 
                 onError: () => {
-                    setStatus("idle");
+                    setStatus('idle');
                 },
 
                 onCancel: () => {
-                    setStatus("idle");
+                    setStatus('idle');
                 },
             },
         );
     };
     const buttonStyles = {
-        idle: "bg-[#203452] hover:bg-[#2c4568] text-white shadow-none",
-        loading: "bg-[#344968] text-white cursor-wait",
+        idle: 'bg-[#203452] hover:bg-[#2c4568] text-white shadow-none',
+        loading: 'bg-[#344968] text-white cursor-wait',
         success:
-            "bg-emerald-600 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-600/20",
+            'bg-emerald-600 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-600/20',
     };
 
     const buttonLabels = {
-        idle: "Tambah ke Keranjang",
-        loading: "Menambahkan...",
-        success: "Berhasil Ditambahkan!",
+        idle: 'Tambah ke Keranjang',
+        loading: 'Menambahkan...',
+        success: 'Berhasil Ditambahkan!',
     };
     return (
         <article className="group flex w-64 shrink-0 flex-col overflow-hidden rounded-xl border border-[#E2E6ED] bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:w-68 lg:w-72">
@@ -145,12 +145,12 @@ const CardProduct = ({ product }: CardProductProps) => {
             <div className="flex flex-1 flex-col p-4">
                 {/* Category & Name */}
                 <div className="space-y-1.5">
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[#98A2B3]">
+                    <p className="text-[11px] font-semibold tracking-wider text-[#98A2B3] uppercase">
                         {product.category.name}
                     </p>
 
                     <Link href={`/products/${product.slug}`} className="block">
-                        <h3 className="line-clamp-2 min-h-11 text-[15px] font-semibold leading-snug text-[#203452] transition-colors group-hover:text-[#526B91]">
+                        <h3 className="line-clamp-2 min-h-11 text-[15px] leading-snug font-semibold text-[#203452] transition-colors group-hover:text-[#526B91]">
                             {product.name}
                         </h3>
                     </Link>
@@ -158,7 +158,7 @@ const CardProduct = ({ product }: CardProductProps) => {
 
                 {/* Price */}
                 <div className="mt-2.5">
-                    <p className="text-lg font-bold leading-tight text-[#203452]">
+                    <p className="text-lg leading-tight font-bold text-[#203452]">
                         {formatPrice(Number(product.price))}
                     </p>
                 </div>
@@ -182,15 +182,15 @@ const CardProduct = ({ product }: CardProductProps) => {
                     onClick={handleAddToCart}
                     disabled={
                         product.stock <= 0 ||
-                        (status !== "idle" && status !== "success")
+                        (status !== 'idle' && status !== 'success')
                     }
-                    whileHover={status === "idle" ? { scale: 1.02 } : {}}
-                    whileTap={status === "idle" ? { scale: 0.97 } : {}}
+                    whileHover={status === 'idle' ? { scale: 1.02 } : {}}
+                    whileTap={status === 'idle' ? { scale: 0.97 } : {}}
                     animate={{
-                        scale: status === "success" ? [1, 1.035, 1] : 1,
+                        scale: status === 'success' ? [1, 1.035, 1] : 1,
                     }}
                     transition={{ duration: 0.3 }}
-                    className={`mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm cursor-pointer font-semibold transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 ${buttonStyles[status]}`}
+                    className={`mt-4 flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50 ${buttonStyles[status]}`}
                 >
                     <AnimatePresence mode="wait" initial={false}>
                         <motion.span
@@ -201,21 +201,21 @@ const CardProduct = ({ product }: CardProductProps) => {
                             transition={{ duration: 0.2 }}
                             className="flex items-center justify-center gap-2"
                         >
-                            {status === "idle" && <ShoppingCart size={18} />}
+                            {status === 'idle' && <ShoppingCart size={18} />}
 
-                            {status === "loading" && (
+                            {status === 'loading' && (
                                 <LoaderCircle
                                     size={18}
                                     className="animate-spin"
                                 />
                             )}
 
-                            {status === "success" && (
+                            {status === 'success' && (
                                 <motion.span
                                     initial={{ scale: 0, rotate: -45 }}
                                     animate={{ scale: 1, rotate: 0 }}
                                     transition={{
-                                        type: "spring",
+                                        type: 'spring',
                                         stiffness: 400,
                                         damping: 12,
                                     }}

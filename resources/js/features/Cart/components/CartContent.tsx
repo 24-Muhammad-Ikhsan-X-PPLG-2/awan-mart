@@ -1,10 +1,10 @@
-import { formatPrice } from "@/lib/utils";
-import { Link, router } from "@inertiajs/react";
-import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
-import { CartItem } from "../types/carts";
-import { Dispatch, FC, SetStateAction, useEffect, useRef } from "react";
-import { useCartStore } from "@/stores/cart-store";
-import { motion, AnimatePresence } from "motion/react";
+import { formatPrice } from '@/lib/utils';
+import { Link, router } from '@inertiajs/react';
+import { ArrowLeft, Minus, Plus, Trash2 } from 'lucide-react';
+import { CartItem } from '@/types/types';
+import { Dispatch, FC, SetStateAction, useEffect, useRef } from 'react';
+import { useCartStore } from '@/stores/cart-store';
+import { motion, AnimatePresence } from 'motion/react';
 
 type Props = {
     allSelected: boolean;
@@ -40,7 +40,7 @@ const CartContent: FC<Props> = ({
     // Update quantity
     const updateQuantity = (id: number, amount: number) => {
         const selected = cart.find((item) => item.id == id);
-        if (typeof selected === "undefined") return;
+        if (typeof selected === 'undefined') return;
         setCartCount(cartCount + amount);
         setCart((current) =>
             current.map((item) =>
@@ -100,7 +100,7 @@ const CartContent: FC<Props> = ({
             </div>
 
             {/* Table Header */}
-            <div className="hidden grid-cols-[1fr_130px_120px_40px] items-center gap-4 border-b border-[#E2E6ED] px-6 py-4 text-xs font-semibold uppercase tracking-wider text-[#667085] md:grid">
+            <div className="hidden grid-cols-[1fr_130px_120px_40px] items-center gap-4 border-b border-[#E2E6ED] px-6 py-4 text-xs font-semibold tracking-wider text-[#667085] uppercase md:grid">
                 <span>Produk</span>
                 <span className="text-center">Harga</span>
                 <span className="text-center">Jumlah</span>
@@ -114,7 +114,7 @@ const CartContent: FC<Props> = ({
                         <motion.div
                             exit={{
                                 x: -1000,
-                                backgroundColor: "red",
+                                backgroundColor: 'red',
                             }}
                             transition={{
                                 duration: 0.3,
@@ -122,8 +122,8 @@ const CartContent: FC<Props> = ({
                             key={item.id}
                             className={`grid grid-cols-1 gap-5 p-5 transition-colors sm:p-6 md:grid-cols-[1fr_130px_120px_40px] md:items-center md:gap-4 ${
                                 item.product.selected
-                                    ? "bg-white"
-                                    : "bg-[#FCFCFD]"
+                                    ? 'bg-white'
+                                    : 'bg-[#FCFCFD]'
                             }`}
                         >
                             {/* Product */}

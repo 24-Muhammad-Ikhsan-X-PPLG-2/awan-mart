@@ -90,6 +90,7 @@ class UserController extends Controller
             ->with([
                 'payment',
                 'orderItems.product.product_images',
+                'reviews',
             ])
             ->when(
                 $filters['status'] ?? null,

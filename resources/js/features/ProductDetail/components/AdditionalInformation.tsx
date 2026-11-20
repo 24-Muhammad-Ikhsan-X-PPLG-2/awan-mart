@@ -1,4 +1,4 @@
-import { ShieldCheck, Truck } from "lucide-react";
+import { ShieldCheck, Truck } from 'lucide-react';
 
 const AdditionalInformation = () => {
     return (

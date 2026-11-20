@@ -1,16 +1,16 @@
-import { iconMap, navlinks } from "@/constant";
-import { Category } from "@/types/types";
-import { Link } from "@inertiajs/react";
-import { ChevronDown, ArrowRight, LayoutGridCircles } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import { FC, useState } from "react";
+import { iconMap, navlinks } from '@/constant';
+import { Category } from '@/types/types';
+import { Link } from '@inertiajs/react';
+import { ChevronDown, ArrowRight, LayoutGridCircles } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { FC, useState } from 'react';
 
 type Props = {
     activePage?: string;
     categories: Category[] | null;
 };
 
-const RenderNavLink: FC<Props> = ({ activePage = "beranda", categories }) => {
+const RenderNavLink: FC<Props> = ({ activePage = 'beranda', categories }) => {
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
     return (
@@ -18,7 +18,7 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda", categories }) => {
             {navlinks.map((item) => {
                 const isActive =
                     item.display.toLowerCase() === activePage.toLowerCase();
-                const isKategori = item.display === "Kategori";
+                const isKategori = item.display === 'Kategori';
 
                 if (isKategori) {
                     return (
@@ -36,8 +36,8 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda", categories }) => {
                                 }
                                 className={`group relative flex h-full items-center gap-1.5 text-[13px] font-medium tracking-wide transition-colors ${
                                     isCategoryOpen || isActive
-                                        ? "text-[#203452]"
-                                        : "text-[#667085] hover:text-[#203452]"
+                                        ? 'text-[#203452]'
+                                        : 'text-[#667085] hover:text-[#203452]'
                                 }`}
                             >
                                 {item.display}
@@ -46,15 +46,15 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda", categories }) => {
                                     size={14}
                                     strokeWidth={1.8}
                                     className={`transition-transform duration-300 ${
-                                        isCategoryOpen ? "rotate-180" : ""
+                                        isCategoryOpen ? 'rotate-180' : ''
                                     }`}
                                 />
 
                                 <span
                                     className={`absolute bottom-0 left-0 h-0.5 w-full origin-left bg-[#203452] transition-transform duration-300 ${
                                         isCategoryOpen || isActive
-                                            ? "scale-x-100"
-                                            : "scale-x-0"
+                                            ? 'scale-x-100'
+                                            : 'scale-x-0'
                                     }`}
                                 />
                             </button>
@@ -123,8 +123,8 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda", categories }) => {
                         href={item.href}
                         className={`group relative flex h-full items-center text-[13px] tracking-wide transition-colors duration-200 ${
                             isActive
-                                ? "font-semibold text-[#203452]"
-                                : "font-medium text-[#667085] hover:text-[#203452]"
+                                ? 'font-semibold text-[#203452]'
+                                : 'font-medium text-[#667085] hover:text-[#203452]'
                         }`}
                     >
                         {item.display}
@@ -132,8 +132,8 @@ const RenderNavLink: FC<Props> = ({ activePage = "beranda", categories }) => {
                         <span
                             className={`absolute bottom-0 left-0 h-0.5 w-full origin-left bg-[#203452] transition-transform duration-300 ${
                                 isActive
-                                    ? "scale-x-100"
-                                    : "scale-x-0 group-hover:scale-x-100"
+                                    ? 'scale-x-100'
+                                    : 'scale-x-0 group-hover:scale-x-100'
                             }`}
                         />
                     </Link>

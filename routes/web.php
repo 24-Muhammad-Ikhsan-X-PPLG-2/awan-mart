@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MidtransNotificationController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SupplierProcurementController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +56,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/user/address', [UserController::class, 'address']);
     Route::get('/profile', [UserController::class, 'profile']);
     Route::put('/profile', [UserController::class, 'updateProfile']);
+    Route::post('/reviews', [ReviewController::class, 'store'])
+        ->middleware('role:pelanggan')
+        ->name('reviews.store');
 
     Route::prefix('admin')->middleware('role:admin')->group(function () {
         Route::get('/', DashboardController::class)->name('admin.dashboard');

@@ -1,4 +1,4 @@
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag } from 'lucide-react';
 
 const EmptyCheckout = () => {
     return (

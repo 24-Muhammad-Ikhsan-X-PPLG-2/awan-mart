@@ -6,6 +6,18 @@ export type CheckoutItem = {
     product_id: string;
 };
 
+export type Pagination<T> = {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number | null;
+    to: number | null;
+    prev_page_url: string | null;
+    next_page_url: string | null;
+};
+
 export type Address = {
     recipient_name: string;
     phone: string;

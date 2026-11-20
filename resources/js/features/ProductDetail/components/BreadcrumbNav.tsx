@@ -1,15 +1,16 @@
-import { Link } from "@inertiajs/react";
-import { FC } from "react";
+import { Link } from '@inertiajs/react';
+import { FC } from 'react';
 
 type Props = {
     category: string;
     productName: string;
+    categoryId: number;
 };
 
-const BreadcrumbNav: FC<Props> = ({ category, productName }) => {
+const BreadcrumbNav: FC<Props> = ({ category, productName, categoryId }) => {
     return (
         <>
-            <section className="mb-7 flex flex-wrap bg-gray-200 py-3.5 px-14 items-center gap-2 text-xs text-gray-500 sm:mb-10 sm:text-sm">
+            <section className="mb-7 flex flex-wrap items-center gap-2 bg-gray-200 px-14 py-3.5 text-xs text-gray-500 sm:mb-10 sm:text-sm">
                 <Link
                     href="/"
                     className="transition-colors hover:text-[#203452]"
@@ -29,7 +30,7 @@ const BreadcrumbNav: FC<Props> = ({ category, productName }) => {
                 <span>/</span>
 
                 <Link
-                    href={`/categories/${category}`}
+                    href={`/products?category=${categoryId}`}
                     className="transition-colors hover:text-[#203452]"
                 >
                     {category}

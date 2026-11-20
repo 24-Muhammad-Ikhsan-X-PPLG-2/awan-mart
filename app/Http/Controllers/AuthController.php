@@ -66,6 +66,12 @@ class AuthController extends Controller
         }
 
         $req->session()->regenerate();
+        $user = Auth::user();
+        if ($user->role->value == 'admin') {
+            return redirect()->to('/admin');
+        } else if ($user->role->value == 'supplier') {
+            return redirect()->to('/supplier/procurements');
+        }
 
         return redirect()->intended('/');
     }

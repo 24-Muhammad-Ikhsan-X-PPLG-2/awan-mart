@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC } from 'react';
 
 type Props = {
     totalItems: number;
@@ -8,7 +8,7 @@ const Heading: FC<Props> = ({ totalItems }) => {
     return (
         <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#526B91]">
+                <p className="mb-2 text-xs font-semibold tracking-[0.2em] text-[#526B91] uppercase">
                     Your Shopping Cart
                 </p>
 

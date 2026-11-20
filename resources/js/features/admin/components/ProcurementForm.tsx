@@ -1,11 +1,11 @@
-import { useForm } from "@inertiajs/react";
-import { ArrowLeft, LoaderCircle, Plus, Search, Trash2 } from "lucide-react";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useForm } from '@inertiajs/react';
+import { ArrowLeft, LoaderCircle, Plus, Search, Trash2 } from 'lucide-react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import type {
     ProcurementProductOption,
     ProcurementSupplierOption,
-} from "../types";
-import { formatCurrency, formatNumber } from "../formatters";
+} from '../types';
+import { formatCurrency, formatNumber } from '../formatters';
 
 type ProcurementFormData = {
     supplier_id: string;
@@ -34,22 +34,22 @@ const ProcurementForm = ({
     products: ProcurementProductOption[];
 }) => {
     const form = useForm<ProcurementFormData>({
-        supplier_id: "",
+        supplier_id: '',
         tanggal_pengadaan: today(),
-        catatan: "",
-        items: [{ product_id: "", quantity: "1", price: "" }],
+        catatan: '',
+        items: [{ product_id: '', quantity: '1', price: '' }],
     });
     const [suppliers, setSuppliers] = useState(initialSuppliers);
     const [products, setProducts] = useState(initialProducts);
     const [selectedSupplier, setSelectedSupplier] =
         useState<ProcurementSupplierOption | null>(null);
-    const [supplierSearch, setSupplierSearch] = useState("");
+    const [supplierSearch, setSupplierSearch] = useState('');
     const [supplierOpen, setSupplierOpen] = useState(false);
     const [supplierLoading, setSupplierLoading] = useState(false);
     const [supplierSearchError, setSupplierSearchError] = useState<
         string | null
     >(null);
-    const [productSearch, setProductSearch] = useState("");
+    const [productSearch, setProductSearch] = useState('');
     const [productSearchRow, setProductSearchRow] = useState<number | null>(
         null,
     );
@@ -74,12 +74,12 @@ const ProcurementForm = ({
                 const response = await fetch(
                     `/admin/procurements/options?type=suppliers&search=${encodeURIComponent(supplierSearch)}`,
                     {
-                        headers: { Accept: "application/json" },
+                        headers: { Accept: 'application/json' },
                         signal: controller.signal,
                     },
                 );
                 if (!response.ok) {
-                    throw new Error("Supplier tidak dapat dimuat. Coba lagi.");
+                    throw new Error('Supplier tidak dapat dimuat. Coba lagi.');
                 }
                 const payload = (await response.json()) as {
                     options: ProcurementSupplierOption[];
@@ -90,7 +90,7 @@ const ProcurementForm = ({
                     setSupplierSearchError(
                         error instanceof Error
                             ? error.message
-                            : "Supplier tidak dapat dimuat. Coba lagi.",
+                            : 'Supplier tidak dapat dimuat. Coba lagi.',
                     );
                 }
             } finally {
@@ -117,12 +117,12 @@ const ProcurementForm = ({
                 const response = await fetch(
                     `/admin/procurements/options?type=products&search=${encodeURIComponent(productSearch)}`,
                     {
-                        headers: { Accept: "application/json" },
+                        headers: { Accept: 'application/json' },
                         signal: controller.signal,
                     },
                 );
                 if (!response.ok) {
-                    throw new Error("Produk tidak dapat dimuat. Coba lagi.");
+                    throw new Error('Produk tidak dapat dimuat. Coba lagi.');
                 }
                 const payload = (await response.json()) as {
                     options: ProcurementProductOption[];
@@ -139,7 +139,7 @@ const ProcurementForm = ({
                     setProductSearchError(
                         error instanceof Error
                             ? error.message
-                            : "Produk tidak dapat dimuat. Coba lagi.",
+                            : 'Produk tidak dapat dimuat. Coba lagi.',
                     );
                 }
             } finally {
@@ -167,14 +167,14 @@ const ProcurementForm = ({
 
     const submit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        form.post("/admin/procurements", {
+        form.post('/admin/procurements', {
             preserveScroll: true,
         });
     };
 
     const selectProduct = (row: number, product: ProcurementProductOption) => {
         form.setData(
-            "items",
+            'items',
             form.data.items.map((item, index) =>
                 index === row
                     ? {
@@ -190,7 +190,7 @@ const ProcurementForm = ({
             [product.id]: product,
         }));
         setProductSearchRow(null);
-        setProductSearch("");
+        setProductSearch('');
     };
 
     return (
@@ -223,7 +223,7 @@ const ProcurementForm = ({
                                 value={selectedSupplier?.name ?? supplierSearch}
                                 onChange={(event) => {
                                     setSelectedSupplier(null);
-                                    form.setData("supplier_id", "");
+                                    form.setData('supplier_id', '');
                                     setSupplierSearch(event.target.value);
                                     setSupplierOpen(true);
                                 }}
@@ -233,7 +233,7 @@ const ProcurementForm = ({
                                 aria-invalid={Boolean(form.errors.supplier_id)}
                                 aria-describedby={
                                     form.errors.supplier_id
-                                        ? "supplier-error"
+                                        ? 'supplier-error'
                                         : undefined
                                 }
                                 className="h-10 w-full rounded-lg border border-[#E2E6ED] bg-white pr-3 pl-9 text-xs text-[#344054] outline-none placeholder:text-[#A0A9B6] focus:border-[#526B91] focus:ring-2 focus:ring-[#526B91]/10"
@@ -260,7 +260,7 @@ const ProcurementForm = ({
                                             onClick={() => {
                                                 setSelectedSupplier(supplier);
                                                 form.setData(
-                                                    "supplier_id",
+                                                    'supplier_id',
                                                     String(supplier.id),
                                                 );
                                                 setSupplierOpen(false);
@@ -275,7 +275,7 @@ const ProcurementForm = ({
                                                     supplier.email}
                                                 {supplier.address
                                                     ? ` · ${supplier.address}`
-                                                    : ""}
+                                                    : ''}
                                             </span>
                                         </button>
                                     ))
@@ -301,7 +301,7 @@ const ProcurementForm = ({
                             htmlFor="procurement-date"
                             className="mb-1.5 block text-xs font-medium text-[#526072]"
                         >
-                            Tanggal pengadaan{" "}
+                            Tanggal pengadaan{' '}
                             <span className="text-[#A7795E]">*</span>
                         </label>
                         <input
@@ -310,7 +310,7 @@ const ProcurementForm = ({
                             value={form.data.tanggal_pengadaan}
                             onChange={(event) =>
                                 form.setData(
-                                    "tanggal_pengadaan",
+                                    'tanggal_pengadaan',
                                     event.target.value,
                                 )
                             }
@@ -333,7 +333,7 @@ const ProcurementForm = ({
                             htmlFor="procurement-notes"
                             className="mb-1.5 block text-xs font-medium text-[#526072]"
                         >
-                            Catatan{" "}
+                            Catatan{' '}
                             <span className="text-[#8A95A5]">(opsional)</span>
                         </label>
                         <textarea
@@ -342,7 +342,7 @@ const ProcurementForm = ({
                             maxLength={255}
                             value={form.data.catatan}
                             onChange={(event) =>
-                                form.setData("catatan", event.target.value)
+                                form.setData('catatan', event.target.value)
                             }
                             placeholder="Tambahkan catatan untuk pengadaan ini..."
                             className="w-full resize-y rounded-lg border border-[#E2E6ED] bg-white px-3 py-2.5 text-xs leading-5 text-[#344054] outline-none placeholder:text-[#A0A9B6] focus:border-[#526B91] focus:ring-2 focus:ring-[#526B91]/10"
@@ -372,9 +372,9 @@ const ProcurementForm = ({
                     <button
                         type="button"
                         onClick={() =>
-                            form.setData("items", [
+                            form.setData('items', [
                                 ...form.data.items,
-                                { product_id: "", quantity: "1", price: "" },
+                                { product_id: '', quantity: '1', price: '' },
                             ])
                         }
                         className="inline-flex min-h-9 items-center justify-center gap-1.5 self-start rounded-lg border border-[#DDE3EC] px-3 text-[11px] font-semibold text-[#526B91] transition hover:bg-[#F8F9FC] sm:self-auto"
@@ -409,7 +409,7 @@ const ProcurementForm = ({
                                             aria-label={`Hapus item ${index + 1}`}
                                             onClick={() =>
                                                 form.setData(
-                                                    "items",
+                                                    'items',
                                                     form.data.items.filter(
                                                         (_, itemIndex) =>
                                                             itemIndex !== index,
@@ -435,11 +435,11 @@ const ProcurementForm = ({
                                             value={
                                                 productSearchRow === index
                                                     ? productSearch
-                                                    : (selected?.name ?? "")
+                                                    : (selected?.name ?? '')
                                             }
                                             onFocus={() => {
                                                 setProductSearchRow(index);
-                                                setProductSearch("");
+                                                setProductSearch('');
                                             }}
                                             onChange={(event) => {
                                                 setProductSearchRow(index);
@@ -503,7 +503,7 @@ const ProcurementForm = ({
                                                                     <span className="text-[10px] text-[#98A2B3]">
                                                                         Stok
                                                                         saat
-                                                                        ini:{" "}
+                                                                        ini:{' '}
                                                                         {formatNumber(
                                                                             product.stock,
                                                                         )}
@@ -554,7 +554,7 @@ const ProcurementForm = ({
                                             value={item.quantity}
                                             onChange={(event) =>
                                                 form.setData(
-                                                    "items",
+                                                    'items',
                                                     form.data.items.map(
                                                         (row, itemIndex) =>
                                                             itemIndex === index

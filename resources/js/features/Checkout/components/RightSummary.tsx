@@ -1,5 +1,5 @@
 import { formatPrice } from '@/lib/utils';
-import { Address, CheckoutItem } from '@/features/Checkout/types';
+import { Address, CheckoutItem } from '@/types/types';
 import { ChevronRight, ShieldCheck, Truck } from 'lucide-react';
 import { FC } from 'react';
 

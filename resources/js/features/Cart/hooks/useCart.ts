@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { CartItem } from "@/types/types";
 import { router } from "@inertiajs/react";
 import { useCartStore } from "@/stores/cart-store";

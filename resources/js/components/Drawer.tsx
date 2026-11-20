@@ -1,12 +1,12 @@
-import { AnimatePresence } from "motion/react";
-import { FC } from "react";
-import { motion } from "motion/react";
-import { ArrowRight, LayoutGridCircles, UserRound, X } from "lucide-react";
-import SearchInput from "./SearchInput";
-import MobileNav from "./MobileNav";
-import { Link, usePage } from "@inertiajs/react";
-import { Category } from "@/types/types";
-import { iconMap } from "@/constant";
+import { AnimatePresence } from 'motion/react';
+import { FC } from 'react';
+import { motion } from 'motion/react';
+import { ArrowRight, LayoutGridCircles, UserRound, X } from 'lucide-react';
+import SearchInput from './SearchInput';
+import MobileNav from './MobileNav';
+import { Link, usePage } from '@inertiajs/react';
+import { Category } from '@/types/types';
+import { iconMap } from '@/constant';
 
 type Props = {
     isDrawerOpen: boolean;
@@ -39,15 +39,15 @@ const Drawer: FC<Props> = ({
                     />
 
                     <motion.aside
-                        initial={{ x: "100%" }}
+                        initial={{ x: '100%' }}
                         animate={{ x: 0 }}
-                        exit={{ x: "100%" }}
+                        exit={{ x: '100%' }}
                         transition={{
-                            type: "spring",
+                            type: 'spring',
                             stiffness: 320,
                             damping: 32,
                         }}
-                        className="fixed right-0 top-0 z-50 flex h-dvh w-full max-w-100 flex-col overflow-y-auto bg-white shadow-2xl lg:hidden"
+                        className="fixed top-0 right-0 z-50 flex h-dvh w-full max-w-100 flex-col overflow-y-auto bg-white shadow-2xl lg:hidden"
                     >
                         <div className="flex h-19 shrink-0 items-center justify-between border-b border-[#E8EBF0] px-6">
                             <Link
@@ -98,7 +98,7 @@ const Drawer: FC<Props> = ({
                             </div>
 
                             <div className="mt-auto pt-10">
-                                {!user && (
+                                {!user ? (
                                     <Link
                                         href="/auth/login"
                                         onClick={() => setIsDrawerOpen(false)}
@@ -108,6 +108,21 @@ const Drawer: FC<Props> = ({
                                             <UserRound size={19} />
                                             <span className="text-sm font-semibold">
                                                 Masuk ke Akun
+                                            </span>
+                                        </div>
+
+                                        <ArrowRight size={18} />
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        href="/auth/logout"
+                                        onClick={() => setIsDrawerOpen(false)}
+                                        className="flex items-center justify-between rounded-lg border border-[#203452] bg-white px-5 py-3.5 text-[#203452] transition-colors hover:bg-[#2D4568]"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <UserRound size={19} />
+                                            <span className="text-sm font-semibold">
+                                                Keluar dari akun
                                             </span>
                                         </div>
 

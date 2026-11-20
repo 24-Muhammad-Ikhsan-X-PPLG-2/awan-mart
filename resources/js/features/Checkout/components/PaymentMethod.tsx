@@ -1,4 +1,4 @@
-import { CheckCircle2, CreditCard, ShieldCheck } from "lucide-react";
+import { CheckCircle2, CreditCard, ShieldCheck } from 'lucide-react';
 
 const PaymentMethod = () => {
     return (
@@ -19,7 +19,7 @@ const PaymentMethod = () => {
 
             <div className="flex items-center gap-4 rounded-xl border-2 border-[#203452] bg-[#F8F9FC] p-4">
                 <div className="flex h-11 w-16 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm">
-                    <span className="text-lg font-black italic tracking-tight text-[#203452]">
+                    <span className="text-lg font-black tracking-tight text-[#203452] italic">
                         mid
                         <span className="text-[#526B91]">trans</span>
                     </span>

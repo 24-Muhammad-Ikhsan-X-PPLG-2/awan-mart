@@ -1,5 +1,5 @@
-import { formatPrice } from "@/lib/utils";
-import { FC } from "react";
+import { formatPrice } from '@/lib/utils';
+import { FC } from 'react';
 
 type Props = {
     price: number;
