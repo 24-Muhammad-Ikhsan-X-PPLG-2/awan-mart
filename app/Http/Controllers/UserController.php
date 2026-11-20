@@ -44,6 +44,7 @@ class UserController extends Controller
                 // Field alamat pada tabel pelanggan disimpan sebagai payload object.
                 Pelanggan::query()->where('user_id', '=', $user->id)->update([
                     'alamat' => $validated,
+                    'telp' => $validated['phone']
                 ]);
             }
 

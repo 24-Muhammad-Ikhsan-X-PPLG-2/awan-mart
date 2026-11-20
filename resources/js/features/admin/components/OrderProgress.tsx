@@ -1,18 +1,18 @@
-import { Check, Circle, X } from 'lucide-react';
-import type { OrderStatusValue } from '../types';
+import { Check, Circle, X } from "lucide-react";
+import type { OrderStatusValue } from "../types";
 
 const progressSteps: Array<{
     value: OrderStatusValue;
     label: string;
 }> = [
-    { value: 'pending_payment', label: 'Menunggu pembayaran' },
-    { value: 'processing', label: 'Diproses' },
-    { value: 'shipped', label: 'Dikirim' },
-    { value: 'completed', label: 'Selesai' },
+    { value: "pending_payment", label: "Menunggu pembayaran" },
+    { value: "processing", label: "Diproses" },
+    { value: "shipped", label: "Dikirim" },
+    { value: "completed", label: "Selesai" },
 ];
 
 const OrderProgress = ({ status }: { status: OrderStatusValue }) => {
-    if (status === 'canceled') {
+    if (status === "canceled") {
         return (
             <div className="flex items-center gap-3 rounded-lg bg-[#F3EFF0] px-4 py-3 text-sm font-medium text-[#816A70]">
                 <X size={17} />
@@ -42,8 +42,8 @@ const OrderProgress = ({ status }: { status: OrderStatusValue }) => {
                         <span
                             className={`flex size-7 shrink-0 items-center justify-center rounded-full ${
                                 complete || current
-                                    ? 'bg-[#203452] text-white'
-                                    : 'bg-[#F0F2F5] text-[#A0A9B6]'
+                                    ? "bg-[#203452] text-white"
+                                    : "bg-[#F0F2F5] text-[#A0A9B6]"
                             }`}
                         >
                             {complete ? (
@@ -57,10 +57,10 @@ const OrderProgress = ({ status }: { status: OrderStatusValue }) => {
                         <span
                             className={`text-[10px] leading-4 ${
                                 current
-                                    ? 'font-semibold text-[#203452]'
+                                    ? "font-semibold text-[#203452]"
                                     : complete
-                                      ? 'text-[#526B91]'
-                                      : 'text-[#98A2B3]'
+                                      ? "text-[#526B91]"
+                                      : "text-[#98A2B3]"
                             }`}
                         >
                             {step.label}
@@ -69,7 +69,7 @@ const OrderProgress = ({ status }: { status: OrderStatusValue }) => {
                             <span
                                 aria-hidden="true"
                                 className={`absolute top-3.5 left-8 hidden h-px w-[calc(100%-1rem)] sm:block ${
-                                    complete ? 'bg-[#526B91]' : 'bg-[#E5E8EE]'
+                                    complete ? "bg-[#526B91]" : "bg-[#E5E8EE]"
                                 }`}
                             />
                         )}
