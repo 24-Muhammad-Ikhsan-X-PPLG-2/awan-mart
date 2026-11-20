@@ -9,6 +9,7 @@ export type SupplierProfile = {
     id: number;
     name: string;
     email: string;
+    isCourier: boolean;
 };
 
 export type SupplierProcurementListItem = {

@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AdminCatalogController;
+use App\Http\Controllers\AdminCourierController;
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\AdminProcurementController;
+use App\Http\Controllers\AdminSupplierController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
@@ -81,6 +83,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/customers/{customer}/edit', [AdminCatalogController::class, 'editCustomer'])->name('admin.customers.edit');
         Route::put('/customers/{customer}', [AdminCatalogController::class, 'updateCustomer'])->name('admin.customers.update');
         Route::delete('/customers/{customer}', [AdminCatalogController::class, 'destroyCustomer'])->name('admin.customers.destroy');
+        Route::get('/suppliers', [AdminSupplierController::class, 'index'])->name('admin.suppliers.index');
+        Route::get('/suppliers/create', [AdminSupplierController::class, 'create'])->name('admin.suppliers.create');
+        Route::post('/suppliers', [AdminSupplierController::class, 'store'])->name('admin.suppliers.store');
+        Route::get('/suppliers/{supplier}/edit', [AdminSupplierController::class, 'edit'])->name('admin.suppliers.edit');
+        Route::put('/suppliers/{supplier}', [AdminSupplierController::class, 'update'])->name('admin.suppliers.update');
+        Route::delete('/suppliers/{supplier}', [AdminSupplierController::class, 'destroy'])->name('admin.suppliers.destroy');
+        Route::get('/couriers', [AdminCourierController::class, 'index'])->name('admin.couriers.index');
+        Route::get('/couriers/create', [AdminCourierController::class, 'create'])->name('admin.couriers.create');
+        Route::post('/couriers', [AdminCourierController::class, 'store'])->name('admin.couriers.store');
+        Route::get('/couriers/{courier}/edit', [AdminCourierController::class, 'edit'])->name('admin.couriers.edit');
+        Route::put('/couriers/{courier}', [AdminCourierController::class, 'update'])->name('admin.couriers.update');
+        Route::delete('/couriers/{courier}', [AdminCourierController::class, 'destroy'])->name('admin.couriers.destroy');
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('admin.orders.show');
         Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])
@@ -99,6 +113,10 @@ Route::middleware(['auth'])->group(function () {
             ->name('admin.procurements.update-status');
     });
     Route::prefix('supplier')->middleware('role:supplier')->group(function () {
+        Route::get('/deliveries', [\App\Http\Controllers\SupplierDeliveryController::class, 'index'])
+            ->name('supplier.deliveries.index');
+        Route::patch('/deliveries/{order}/complete', [\App\Http\Controllers\SupplierDeliveryController::class, 'complete'])
+            ->name('supplier.deliveries.complete');
         Route::get('/procurements', [SupplierProcurementController::class, 'index'])
             ->name('supplier.procurements.index');
         Route::get('/procurements/{procurement}', [SupplierProcurementController::class, 'show'])

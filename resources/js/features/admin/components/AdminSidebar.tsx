@@ -1,27 +1,29 @@
-import { Link } from '@inertiajs/react';
+import { Link } from "@inertiajs/react";
 import {
     ClipboardList,
     LayoutDashboard,
     LogOut,
     Package,
-    Settings,
     ShoppingBag,
+    Store,
     Tag,
     Truck,
     Users,
     X,
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-import type { DashboardProps } from '../types';
-import { getInitials } from '../formatters';
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import type { DashboardProps } from "../types";
+import { getInitials } from "../formatters";
 
 export type AdminSection =
-    | 'dashboard'
-    | 'products'
-    | 'categories'
-    | 'orders'
-    | 'customers'
-    | 'procurements';
+    | "dashboard"
+    | "products"
+    | "categories"
+    | "orders"
+    | "customers"
+    | "suppliers"
+    | "couriers"
+    | "procurements";
 
 const navigation: Array<{
     label: string;
@@ -30,32 +32,57 @@ const navigation: Array<{
     section?: AdminSection;
 }> = [
     {
-        label: 'Dashboard',
-        href: '/admin',
+        label: "Dashboard",
+        href: "/admin",
         icon: LayoutDashboard,
-        section: 'dashboard',
+        section: "dashboard",
     },
-    { label: 'Produk', href: '/admin/products', icon: Package, section: 'products' },
-    { label: 'Kategori', href: '/admin/categories', icon: Tag, section: 'categories' },
     {
-        label: 'Pesanan',
-        href: '/admin/orders',
+        label: "Produk",
+        href: "/admin/products",
+        icon: Package,
+        section: "products",
+    },
+    {
+        label: "Kategori",
+        href: "/admin/categories",
+        icon: Tag,
+        section: "categories",
+    },
+    {
+        label: "Pesanan",
+        href: "/admin/orders",
         icon: ShoppingBag,
-        section: 'orders',
+        section: "orders",
     },
-    { label: 'Pelanggan', href: '/admin/customers', icon: Users, section: 'customers' },
-    { label: 'Supplier', icon: Truck },
     {
-        label: 'Pengadaan',
-        href: '/admin/procurements',
-        icon: ClipboardList,
-        section: 'procurements',
+        label: "Pelanggan",
+        href: "/admin/customers",
+        icon: Users,
+        section: "customers",
     },
-    { label: 'Pengaturan', icon: Settings },
+    {
+        label: "Supplier",
+        href: "/admin/suppliers",
+        icon: Store,
+        section: "suppliers",
+    },
+    {
+        label: "Kurir",
+        href: "/admin/couriers",
+        icon: Truck,
+        section: "couriers",
+    },
+    {
+        label: "Pengadaan",
+        href: "/admin/procurements",
+        icon: ClipboardList,
+        section: "procurements",
+    },
 ];
 
 type Props = {
-    admin: DashboardProps['admin'];
+    admin: DashboardProps["admin"];
     mobileOpen: boolean;
     onClose: () => void;
     activePage?: AdminSection;
@@ -65,7 +92,7 @@ const AdminSidebar = ({
     admin,
     mobileOpen,
     onClose,
-    activePage = 'dashboard',
+    activePage = "dashboard",
 }: Props) => (
     <>
         {mobileOpen && (
@@ -92,9 +119,9 @@ const SidebarPanel = ({
     admin,
     mobile = false,
     onClose,
-    activePage = 'dashboard',
+    activePage = "dashboard",
 }: {
-    admin: DashboardProps['admin'];
+    admin: DashboardProps["admin"];
     mobile?: boolean;
     onClose?: () => void;
     activePage?: AdminSection;
@@ -102,8 +129,8 @@ const SidebarPanel = ({
     <aside
         className={`${
             mobile
-                ? 'absolute inset-y-0 left-0 flex w-[min(290px,85vw)] flex-col shadow-2xl'
-                : 'sticky top-0 hidden h-screen w-[252px] shrink-0 flex-col border-r border-[#E6E9EF] lg:flex'
+                ? "absolute inset-y-0 left-0 flex w-[min(290px,85vw)] flex-col shadow-2xl"
+                : "sticky top-0 hidden h-screen w-[252px] shrink-0 flex-col border-r border-[#E6E9EF] lg:flex"
         } bg-white`}
     >
         {mobile && (
@@ -148,18 +175,18 @@ const SidebarPanel = ({
                             key={item.label}
                             href={item.href}
                             onClick={onClose}
-                            aria-current={active ? 'page' : undefined}
+                            aria-current={active ? "page" : undefined}
                             className={`flex min-h-10 items-center gap-3 rounded-lg px-3 text-xs font-medium transition-colors ${
                                 active
-                                    ? 'bg-[#EEF2F8] text-[#203452]'
-                                    : 'text-[#6F7B8D] hover:bg-[#F8F9FC] hover:text-[#203452]'
+                                    ? "bg-[#EEF2F8] text-[#203452]"
+                                    : "text-[#6F7B8D] hover:bg-[#F8F9FC] hover:text-[#203452]"
                             }`}
                         >
                             <Icon
                                 size={17}
                                 strokeWidth={active ? 2 : 1.8}
                                 className={
-                                    active ? 'text-[#203452]' : 'text-[#8792A2]'
+                                    active ? "text-[#203452]" : "text-[#8792A2]"
                                 }
                             />
                             {item.label}

@@ -36,6 +36,8 @@ export type ProductType = {
     price: string;
     stock: number;
     category_id: number;
+    reviews_count?: number;
+    reviews_avg_rating?: number | string | null;
     category: {
         id: number;
         name: string;

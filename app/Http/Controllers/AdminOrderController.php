@@ -142,6 +142,10 @@ class AdminOrderController extends Controller
                 'orderNumber' => $order->order_number,
                 'date' => $order->created_at?->toISOString(),
                 'status' => $order->status->value,
+                'courierName' => $order->courier_name ?? $order->courier?->name,
+                'shippingCost' => (int) $order->shipping_cost,
+                'shippedAt' => $order->shipped_at?->toISOString(),
+                'completedAt' => $order->completed_at?->toISOString(),
                 'canMarkAsShipped' => $order->status === OrderStatus::Processing,
                 'shippingAddress' => $order->shipping_address,
                 'customer' => [
@@ -198,7 +202,10 @@ class AdminOrderController extends Controller
                 ]);
             }
 
-            $lockedOrder->update(['status' => $validated['status']]);
+            $lockedOrder->update([
+                'status' => $validated['status'],
+                'shipped_at' => now(),
+            ]);
         });
 
         return back()->with('success', 'Pesanan berhasil ditandai sebagai dikirim.');

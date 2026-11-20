@@ -5,12 +5,13 @@ import Breadcrumb from '@/features/Checkout/components/breadcrumb';
 import HeadingCheckout from '@/features/Checkout/components/HeadingCheckout';
 import EmptyCheckout from '@/features/Checkout/components/EmptyCheckout';
 import CheckoutContent from '@/features/Checkout/components/CheckoutContent';
+import type { CourierOption } from '@/features/Checkout/components/CourierSelector';
 import { Address, CheckoutItem } from '@/types/types';
 
 type CheckoutProps = {
     items: CheckoutItem[];
     address: Address | null;
-    shippingCost: number;
+    couriers: CourierOption[];
 };
 
 type CheckoutResponse = {
@@ -28,9 +29,12 @@ type PaymentConfirmationResponse = {
 const CheckoutPage = ({
     items,
     address: addressServer,
-    shippingCost,
+    couriers,
 }: CheckoutProps) => {
     const [address, setAddress] = useState<Address | null>(addressServer);
+    const [selectedCourierId, setSelectedCourierId] = useState<number | null>(
+        couriers[0]?.id ?? null,
+    );
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [checkoutError, setCheckoutError] = useState<string | null>(null);
     const subtotal = useMemo(
@@ -44,10 +48,14 @@ const CheckoutPage = ({
         [items],
     );
 
+    const selectedCourier = couriers.find(
+        (courier) => courier.id === selectedCourierId,
+    );
+    const shippingCost = selectedCourier?.shippingCost ?? 0;
     const total = subtotal + shippingCost;
 
     const handleCheckout = async () => {
-        if (!address || isSubmitting) return;
+        if (!address || !selectedCourier || isSubmitting) return;
 
         setIsSubmitting(true);
         setCheckoutError(null);
@@ -71,6 +79,7 @@ const CheckoutPage = ({
                 },
                 body: JSON.stringify({
                     shipping_address: address.address,
+                    courier_id: selectedCourier.id,
                     items: items.map((item) => ({
                         product_id: item.product.id,
                         quantity: item.quantity,
@@ -181,6 +190,10 @@ const CheckoutPage = ({
                 ) : (
                     <CheckoutContent
                         setAddress={setAddress}
+                        couriers={couriers}
+                        selectedCourierId={selectedCourierId}
+                        setSelectedCourierId={setSelectedCourierId}
+                        courierName={selectedCourier?.name ?? null}
                         address={address}
                         handleCheckout={handleCheckout}
                         isSubmitting={isSubmitting}

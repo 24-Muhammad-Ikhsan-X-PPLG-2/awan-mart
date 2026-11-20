@@ -205,6 +205,18 @@ const OrderDetailsPanel = ({
                                     {order.shippingAddress}
                                 </dd>
                             </div>
+                            <Detail
+                                label="Kurir"
+                                value={order.courierName || 'Belum ditentukan'}
+                            />
+                            <Detail
+                                label="Status pengiriman"
+                                value={
+                                    order.shippedAt
+                                        ? `Dikirim ${formatDate(order.shippedAt)}`
+                                        : 'Belum dikirim'
+                                }
+                            />
                         </dl>
                     </section>
                 </div>

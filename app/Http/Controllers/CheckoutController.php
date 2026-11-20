@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Courier;
 use App\Models\Order;
 use App\Models\OrderStatus;
 use App\Models\Payment;
@@ -19,8 +20,6 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
-use Midtrans\Config;
-use Midtrans\Snap;
 use Midtrans\Transaction;
 use Throwable;
 
@@ -32,8 +31,6 @@ use Throwable;
  */
 class CheckoutController extends Controller
 {
-    private const SHIPPING_COST = 15000;
-
     /**
      * Menyiapkan halaman checkout dari produk yang dipilih, mengecek ketersediaan stok,
      * dan mengirimkan alamat pelanggan beserta rincian belanja ke frontend.
@@ -79,7 +76,18 @@ class CheckoutController extends Controller
 
         return Inertia::render('checkout', [
             'items' => $items->values(),
-            'shippingCost' => $products->isEmpty() ? 0 : self::SHIPPING_COST,
+            'couriers' => Courier::query()
+                ->where('is_active', true)
+                ->with('supplier:id,name')
+                ->orderBy('shipping_cost')
+                ->get()
+                ->map(fn (Courier $courier): array => [
+                    'id' => $courier->id,
+                    'name' => $courier->name,
+                    'supplier' => $courier->supplier->name,
+                    'shippingCost' => $courier->shipping_cost,
+                ])
+                ->values(),
             'address' => $address,
         ]);
     }
@@ -92,6 +100,7 @@ class CheckoutController extends Controller
     {
         $validated = $req->validate([
             'shipping_address' => ['required', 'string'],
+            'courier_id' => ['required', 'integer', 'exists:couriers,id'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => [
                 'required',
@@ -115,6 +124,18 @@ class CheckoutController extends Controller
                         ->whereKey($user->id)
                         ->lockForUpdate()
                         ->firstOrFail();
+
+                    $courier = Courier::query()
+                        ->whereKey($validated['courier_id'])
+                        ->where('is_active', true)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if ($courier === null) {
+                        throw ValidationException::withMessages([
+                            'courier_id' => 'Kurir yang dipilih sudah tidak tersedia.',
+                        ]);
+                    }
 
                     $items = collect($validated['items']);
 
@@ -164,13 +185,13 @@ class CheckoutController extends Controller
                         ];
                     }
 
-                    $shippingCost = self::SHIPPING_COST;
+                    $shippingCost = $courier->shipping_cost;
                     $totalPrice = $subtotal + $shippingCost;
                     $itemDetails[] = [
                         'id' => 'shipping',
                         'price' => $shippingCost,
                         'quantity' => 1,
-                        'name' => 'Ongkos Kirim',
+                        'name' => Str::limit('Ongkir '.$courier->name, 50, ''),
                     ];
 
                     // Jika user sudah punya order pending dengan barang dan total yang sama,
@@ -192,8 +213,15 @@ class CheckoutController extends Controller
                         ->orderByDesc('id')
                         ->lockForUpdate()
                         ->get()
-                        ->first(function (Order $order) use ($orderItems, $totalPrice) {
+                        ->first(function (Order $order) use ($orderItems, $totalPrice, $courier) {
                             if ((float) $order->total_price !== (float) $totalPrice) {
+                                return false;
+                            }
+
+                            if (
+                                $order->courier_id !== $courier->id
+                                || $order->courier_name !== $courier->name
+                            ) {
                                 return false;
                             }
 
@@ -247,6 +275,9 @@ class CheckoutController extends Controller
                     $order = Order::create([
                         'order_number' => $orderNumber,
                         'user_id' => $user->id,
+                        'courier_id' => $courier->id,
+                        'courier_name' => $courier->name,
+                        'shipping_cost' => $shippingCost,
                         'total_price' => $totalPrice,
                         'shipping_address' => $validated['shipping_address'],
                         'status' => OrderStatus::PendingPayment,
@@ -271,12 +302,6 @@ class CheckoutController extends Controller
                 }
             );
 
-            // Midtrans configuration
-            Config::$serverKey = config('services.midtrans.server_key');
-            Config::$isProduction = config('services.midtrans.is_production');
-            Config::$isSanitized = true;
-            Config::$is3ds = true;
-
             // Buat token Snap sekali agar percobaan ulang tidak membuat transaksi baru.
             $payment = DB::transaction(function () use ($payment, $itemDetails, $user) {
                 $payment = Payment::query()
@@ -288,7 +313,7 @@ class CheckoutController extends Controller
                     return $payment;
                 }
 
-                $snapResponse = Snap::createTransaction([
+                $snapResponse = app(MidtransPaymentService::class)->createSnapTransaction([
                     'transaction_details' => [
                         'order_id' => $payment->provider_order_id,
                         'gross_amount' => (int) $payment->amount,

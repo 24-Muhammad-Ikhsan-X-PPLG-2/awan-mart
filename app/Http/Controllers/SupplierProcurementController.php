@@ -262,7 +262,7 @@ class SupplierProcurementController extends Controller
     }
 
     /**
-     * @return array{id: int, name: string, email: string}
+     * @return array{id: int, name: string, email: string, isCourier: bool}
      */
     private function supplierData(Supplier $supplier, User $user): array
     {
@@ -270,6 +270,7 @@ class SupplierProcurementController extends Controller
             'id' => $supplier->id,
             'name' => $supplier->name,
             'email' => $user->email,
+            'isCourier' => $supplier->courier()->where('is_active', true)->exists(),
         ];
     }
 

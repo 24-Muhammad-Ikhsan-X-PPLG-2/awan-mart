@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { ClipboardList, LogOut, ShoppingBag } from 'lucide-react';
+import { ClipboardList, LogOut, PackageCheck, ShoppingBag } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { SupplierProfile } from '../types';
 
@@ -50,6 +50,15 @@ const SupplierLayout = ({
                         <ClipboardList size={15} />
                         Permintaan Pengadaan
                     </Link>
+                    {supplier.isCourier && (
+                        <Link
+                            href="/supplier/deliveries"
+                            className="hidden items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold text-[#78716C] hover:bg-[#FFF7ED] hover:text-[#EA580C] sm:inline-flex"
+                        >
+                            <PackageCheck size={15} />
+                            Pengiriman Pesanan
+                        </Link>
+                    )}
                     <span className="hidden h-8 w-px bg-[#E7E5E4] sm:block" />
                     <span className="flex size-9 items-center justify-center rounded-full bg-[#FFEDD5] text-xs font-semibold text-[#C2410C]">
                         {initials(supplier.name)}
@@ -84,6 +93,15 @@ const SupplierLayout = ({
                     <ClipboardList size={15} />
                     Permintaan Pengadaan
                 </Link>
+                {supplier.isCourier && (
+                    <Link
+                        href="/supplier/deliveries"
+                        className="ml-2 inline-flex items-center gap-2 rounded-lg px-2 py-2 text-xs font-semibold text-[#78716C] hover:text-[#EA580C]"
+                    >
+                        <PackageCheck size={15} />
+                        Pengiriman Pesanan
+                    </Link>
+                )}
             </nav>
         </header>
         <main className="mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-9 lg:px-8">

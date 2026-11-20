@@ -9,12 +9,25 @@ use App\Models\PaymentStatus;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Midtrans\Config;
+use Midtrans\Snap;
 use Midtrans\Transaction;
 use RuntimeException;
 use UnexpectedValueException;
 
 class MidtransPaymentService
 {
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public function createSnapTransaction(array $parameters): object
+    {
+        $this->configure();
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
+
+        return Snap::createTransaction($parameters);
+    }
+
     /**
      * @return array<string, mixed>
      */

@@ -171,9 +171,13 @@ const CardProduct = ({ product }: CardProductProps) => {
                         className="shrink-0 text-yellow-500"
                     />
 
-                    <span className="font-semibold text-[#203452]">4.8</span>
+                    <span className="font-semibold text-[#203452]">
+                        {Number(product.reviews_avg_rating ?? 0).toFixed(1)}
+                    </span>
 
-                    <span className="text-[#98A2B3]">(12 ulasan)</span>
+                    <span className="text-[#98A2B3]">
+                        ({product.reviews_count ?? 0} ulasan)
+                    </span>
                 </div>
 
                 {/* Add to Cart */}

@@ -1,0 +1,103 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle awesome
+skinparam usecase {
+    BackgroundColor #F8F9FC
+    BorderColor #526B91
+    ArrowColor #526B91
+}
+skinparam package {
+    BorderColor #203452
+    FontColor #203452
+}
+
+actor "Pengunjung" as Visitor
+actor "Pelanggan" as Customer
+actor "Supplier" as Supplier
+actor "Admin" as Admin
+actor "Midtrans" as Midtrans <<external system>>
+
+Customer --|> Visitor
+
+rectangle "Sistem AwanMart" {
+    package "Katalog" {
+        usecase "Melihat beranda" as UC_Home
+        usecase "Melihat katalog produk" as UC_Catalog
+        usecase "Melihat kategori" as UC_Category
+        usecase "Melihat detail produk\ndan ulasan" as UC_Product
+    }
+
+    package "Akun Pelanggan" {
+        usecase "Mengelola profil\ndan alamat" as UC_Profile
+        usecase "Mengelola keranjang" as UC_Cart
+        usecase "Checkout dan memilih kurir" as UC_Checkout
+        usecase "Membayar pesanan" as UC_Payment
+        usecase "Melihat riwayat dan\nstatus pengiriman" as UC_Track
+        usecase "Memberikan ulasan\npesanan selesai" as UC_Review
+    }
+
+    package "Portal Supplier" {
+        usecase "Melihat permintaan\npengadaan" as UC_ViewProcurement
+        usecase "Menerima permintaan\npengadaan" as UC_AcceptProcurement
+        usecase "Menolak permintaan\npengadaan" as UC_RejectProcurement
+        usecase "Mengonfirmasi pengiriman\npengadaan" as UC_ShipProcurement
+        usecase "Menyelesaikan pengiriman\npesanan pelanggan" as UC_Delivery
+    }
+
+    package "Panel Admin" {
+        usecase "Melihat dashboard" as UC_Dashboard
+        usecase "Mengelola produk" as UC_Products
+        usecase "Mengelola kategori" as UC_Categories
+        usecase "Mengelola akun pelanggan" as UC_Customers
+        usecase "Mengelola akun supplier" as UC_Suppliers
+        usecase "Mengelola kurir dan tarif" as UC_Couriers
+        usecase "Mengelola pesanan" as UC_Orders
+        usecase "Menandai pesanan\ndikirim" as UC_ShipOrder
+        usecase "Mengelola pengadaan" as UC_Procurement
+        usecase "Menyelesaikan pengadaan\ndan memperbarui stok" as UC_ReceiveProcurement
+    }
+}
+
+Visitor --> UC_Home
+Visitor --> UC_Catalog
+Visitor --> UC_Category
+Visitor --> UC_Product
+
+Customer --> UC_Profile
+Customer --> UC_Cart
+Customer --> UC_Checkout
+Customer --> UC_Payment
+Customer --> UC_Track
+Customer --> UC_Review
+UC_Checkout ..> UC_Cart : <<include>>
+UC_Payment --> Midtrans
+
+Supplier --> UC_ViewProcurement
+Supplier --> UC_AcceptProcurement
+Supplier --> UC_RejectProcurement
+Supplier --> UC_ShipProcurement
+Supplier --> UC_Delivery : jika ditetapkan\nsebagai kurir aktif
+
+Admin --> UC_Dashboard
+Admin --> UC_Products
+Admin --> UC_Categories
+Admin --> UC_Customers
+Admin --> UC_Suppliers
+Admin --> UC_Couriers
+Admin --> UC_Orders
+Admin --> UC_ShipOrder
+Admin --> UC_Procurement
+Admin --> UC_ReceiveProcurement
+
+UC_ShipOrder ..> UC_Orders : <<extend>>
+UC_ReceiveProcurement ..> UC_Procurement : <<extend>>
+UC_Delivery ..> UC_Track : memperbarui status
+
+note bottom of Supplier
+  Kurir bukan role terpisah.
+  Supplier dapat diberi tugas kurir oleh Admin.
+end note
+
+@enduml

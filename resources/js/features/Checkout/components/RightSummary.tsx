@@ -12,6 +12,8 @@ type Props = {
     handleCheckout: () => void;
     isSubmitting: boolean;
     checkoutError: string | null;
+    courierName: string | null;
+    canSubmit: boolean;
 };
 
 const RightSummary: FC<Props> = ({
@@ -23,6 +25,8 @@ const RightSummary: FC<Props> = ({
     handleCheckout,
     isSubmitting,
     checkoutError,
+    courierName,
+    canSubmit,
 }) => {
     return (
         <aside className="lg:sticky lg:top-24">
@@ -57,7 +61,9 @@ const RightSummary: FC<Props> = ({
                     <div className="flex justify-between gap-3">
                         <span className="flex items-center gap-1.5 text-[#98A2B3]">
                             <Truck size={15} />
-                            Ongkos kirim
+                            {courierName
+                                ? `Ongkir · ${courierName}`
+                                : 'Ongkos kirim'}
                         </span>
                         <span className="font-medium text-[#203452]">
                             {formatPrice(shippingCost)}
@@ -77,7 +83,12 @@ const RightSummary: FC<Props> = ({
                 <button
                     type="button"
                     onClick={handleCheckout}
-                    disabled={!address || items.length === 0 || isSubmitting}
+                    disabled={
+                        !address ||
+                        items.length === 0 ||
+                        isSubmitting ||
+                        !canSubmit
+                    }
                     className="flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-[#203452] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#526B91] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     {isSubmitting ? 'Memproses...' : 'Buat Pesanan'}

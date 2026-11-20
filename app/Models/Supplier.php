@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
@@ -31,5 +32,11 @@ class Supplier extends Model
     public function procurements(): HasMany
     {
         return $this->hasMany(Procurement::class);
+    }
+
+    /** @return HasOne<Courier, $this> */
+    public function courier(): HasOne
+    {
+        return $this->hasOne(Courier::class);
     }
 }

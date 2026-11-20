@@ -4,10 +4,15 @@ import ShippingAddress from './ShippingAddress';
 import Products from './Products';
 import PaymentMethod from './PaymentMethod';
 import RightSummary from './RightSummary';
+import CourierSelector, { CourierOption } from './CourierSelector';
 
 type Props = {
     address: Address | null;
     setAddress: (v: Address | null) => void;
+    couriers: CourierOption[];
+    selectedCourierId: number | null;
+    setSelectedCourierId: (id: number) => void;
+    courierName: string | null;
     items: CheckoutItem[];
     subtotal: number;
     shippingCost: number;
@@ -19,6 +24,10 @@ type Props = {
 
 const CheckoutContent: FC<Props> = ({
     address,
+    couriers,
+    selectedCourierId,
+    setSelectedCourierId,
+    courierName,
     items,
     shippingCost,
     subtotal,
@@ -35,6 +44,12 @@ const CheckoutContent: FC<Props> = ({
                 {/* Shipping Address */}
                 <ShippingAddress setAddress={setAddress} address={address} />
 
+                <CourierSelector
+                    couriers={couriers}
+                    selectedCourierId={selectedCourierId}
+                    onChange={setSelectedCourierId}
+                />
+
                 {/* Products */}
                 <Products items={items} />
 
@@ -45,6 +60,8 @@ const CheckoutContent: FC<Props> = ({
             {/* Right Summary */}
             <RightSummary
                 address={address}
+                canSubmit={Boolean(selectedCourierId)}
+                courierName={courierName}
                 handleCheckout={handleCheckout}
                 isSubmitting={isSubmitting}
                 checkoutError={checkoutError}

@@ -20,6 +20,14 @@ export type OrderData = {
     order_number: string;
     total_price: string;
     shipping_address: string;
+    courier_id: number | null;
+    courier_name: string | null;
+    shipping_cost: number;
+    shipped_at: string | null;
+    completed_at: string | null;
+    courier: {
+        name: string;
+    } | null;
     status:
         | 'pending_payment'
         | 'processing'

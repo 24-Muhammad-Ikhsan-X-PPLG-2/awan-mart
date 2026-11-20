@@ -141,6 +141,10 @@ export type OrderDetailProps = {
         orderNumber: string;
         date: string | null;
         status: OrderStatusValue;
+        courierName: string | null;
+        shippingCost: number;
+        shippedAt: string | null;
+        completedAt: string | null;
         canMarkAsShipped: boolean;
         shippingAddress: string;
         customer: {
@@ -324,6 +328,20 @@ export type AdminCustomer = {
     joinedAt: string | null;
 };
 
+export type AdminSupplier = {
+    id: number;
+    userId: number;
+    name: string;
+    email: string;
+    phone: string | null;
+    address: string | null;
+    productsCount: number;
+    procurementsCount: number;
+    isCourier: boolean;
+    courierActive: boolean;
+    joinedAt: string | null;
+};
+
 export type AdminProductsProps = {
     admin: DashboardProps['admin'];
     generatedAt: string;
@@ -381,5 +399,24 @@ export type AdminCustomerFormProps = {
         name: string;
         email: string;
         phone: string;
+    };
+};
+
+export type AdminSuppliersProps = {
+    admin: DashboardProps['admin'];
+    generatedAt: string;
+    suppliers: AdminPagination<AdminSupplier>;
+    filters: { search: string };
+};
+
+export type AdminSupplierFormProps = {
+    admin: DashboardProps['admin'];
+    generatedAt: string;
+    supplier: null | {
+        id: number;
+        name: string;
+        email: string;
+        phone: string;
+        address: string;
     };
 };

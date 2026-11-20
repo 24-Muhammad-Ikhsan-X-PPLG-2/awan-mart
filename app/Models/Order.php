@@ -16,6 +16,11 @@ use Override;
  * @property int $user_id
  * @property string $total_price
  * @property string $shipping_address
+ * @property int|null $courier_id
+ * @property string|null $courier_name
+ * @property string $shipping_cost
+ * @property Carbon|null $shipped_at
+ * @property Carbon|null $completed_at
  * @property OrderStatus $status
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -26,6 +31,11 @@ use Override;
     'total_price',
     'shipping_address',
     'status',
+    'courier_id',
+    'courier_name',
+    'shipping_cost',
+    'shipped_at',
+    'completed_at',
 ])]
 class Order extends Model
 {
@@ -37,6 +47,9 @@ class Order extends Model
         return [
             'total_price' => 'decimal:2',
             'status' => OrderStatus::class,
+            'shipping_cost' => 'integer',
+            'shipped_at' => 'datetime',
+            'completed_at' => 'datetime',
         ];
     }
 
@@ -62,5 +75,11 @@ class Order extends Model
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
+    }
+
+    /** @return BelongsTo<Courier, $this> */
+    public function courier(): BelongsTo
+    {
+        return $this->belongsTo(Courier::class);
     }
 }

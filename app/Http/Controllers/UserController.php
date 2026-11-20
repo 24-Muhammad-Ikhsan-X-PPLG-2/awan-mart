@@ -91,6 +91,7 @@ class UserController extends Controller
                 'payment',
                 'orderItems.product.product_images',
                 'reviews',
+                'courier',
             ])
             ->when(
                 $filters['status'] ?? null,

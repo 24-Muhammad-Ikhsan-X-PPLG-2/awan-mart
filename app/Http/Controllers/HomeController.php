@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\Review;
+use Illuminate\Support\Collection;
 use Inertia\Inertia;
 
 /**
@@ -19,10 +20,13 @@ class HomeController extends Controller
     public function index()
     {
         // Ambil produk paling relevan di landing page: product + kategori + gambar.
-        $products = Product::with([
+        $products = Product::query()->with([
             'category',
-            'product_images'
-        ])->limit(4)->get();
+            'product_images',
+        ])->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->limit(4)
+            ->get();
         $this->normalizeProductImages($products);
 
         // Kategori ini dipakai untuk navigasi cepat di halaman depan.
@@ -30,7 +34,7 @@ class HomeController extends Controller
 
         return Inertia::render('home', [
             'products' => $products,
-            'categories' => $categories
+            'categories' => $categories,
         ]);
     }
 
@@ -92,7 +96,7 @@ class HomeController extends Controller
         ]);
     }
 
-    private function normalizeProductImages(\Illuminate\Support\Collection $products): void
+    private function normalizeProductImages(Collection $products): void
     {
         $products->each(function (Product $product): void {
             $product->product_images->each(function (ProductImage $image): void {

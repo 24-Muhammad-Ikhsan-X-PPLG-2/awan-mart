@@ -7,9 +7,11 @@ import {
     ChevronLeft,
     ChevronRight,
     CreditCard,
+    CheckCircle2,
     Package,
     Search,
     ShoppingBag,
+    Truck,
     X,
 } from 'lucide-react';
 import { FormEvent, useEffect, useState } from 'react';
@@ -321,6 +323,77 @@ const OrderCard = ({ order }: { order: OrderData }) => {
 
             {isExpanded && (
                 <div className="space-y-4 border-t border-[#E2E6ED] bg-[#FCFCFD] px-4 py-5 sm:px-5">
+                    <section className="rounded-xl border border-[#E2E6ED] bg-white p-4 sm:p-5">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                                <h3 className="flex items-center gap-2 text-sm font-semibold text-[#203452]">
+                                    <Truck size={16} />
+                                    Informasi Pengiriman
+                                </h3>
+                                <p className="mt-1 text-xs text-[#667085]">
+                                    Kurir:{' '}
+                                    {order.courier_name ??
+                                        order.courier?.name ??
+                                        'Belum ditentukan'}
+                                    {' · '}
+                                    Ongkos kirim:{' '}
+                                    {formatPrice(
+                                        Number(order.shipping_cost ?? 0),
+                                    )}
+                                </p>
+                            </div>
+                            <span
+                                className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${orderStatusStyles[order.status]}`}
+                            >
+                                {orderStatusLabels[order.status]}
+                            </span>
+                        </div>
+                        <ol className="mt-5 grid gap-3 sm:grid-cols-3">
+                            {[
+                                {
+                                    label: 'Pesanan dibuat',
+                                    date: order.created_at,
+                                    done: true,
+                                },
+                                {
+                                    label: 'Dalam pengiriman',
+                                    date: order.shipped_at,
+                                    done: Boolean(order.shipped_at),
+                                },
+                                {
+                                    label: 'Pesanan selesai',
+                                    date: order.completed_at,
+                                    done: order.status === 'completed',
+                                },
+                            ].map((step) => (
+                                <li
+                                    key={step.label}
+                                    className="flex items-start gap-2.5"
+                                >
+                                    <CheckCircle2
+                                        size={16}
+                                        className={
+                                            step.done
+                                                ? 'mt-0.5 shrink-0 text-emerald-600'
+                                                : 'mt-0.5 shrink-0 text-[#D0D5DD]'
+                                        }
+                                    />
+                                    <span>
+                                        <span
+                                            className={`block text-xs font-medium ${step.done ? 'text-[#344054]' : 'text-[#98A2B3]'}`}
+                                        >
+                                            {step.label}
+                                        </span>
+                                        <span className="mt-1 block text-[10px] text-[#98A2B3]">
+                                            {step.date
+                                                ? formatDate(step.date)
+                                                : 'Menunggu'}
+                                        </span>
+                                    </span>
+                                </li>
+                            ))}
+                        </ol>
+                    </section>
                     {order.status === 'completed' && (
                         <section className="space-y-4">
                             <h3 className="text-xs font-semibold tracking-wide text-[#526B91] uppercase">
@@ -328,7 +401,8 @@ const OrderCard = ({ order }: { order: OrderData }) => {
                             </h3>
                             {order.order_items.map((item) => {
                                 const review = order.reviews.find(
-                                    (entry) => entry.product_id === item.product_id,
+                                    (entry) =>
+                                        entry.product_id === item.product_id,
                                 );
 
                                 return (

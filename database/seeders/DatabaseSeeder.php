@@ -42,13 +42,22 @@ class DatabaseSeeder extends Seeder
             'user_id' => $user->id,
             'name' => 'ikhsannn'
         ]);
-        $kurir = User::query()->create([
+        $kurirJne = User::query()->create([
             'email' => 'kurir12@jne.com',
             'password' => 'kurir123321',
             'role' => 'supplier'
         ]);
+        $kurirJnt = User::query()->create([
+            'email' => 'kurir@jnt.com',
+            'password' => 'kurirjnt123321',
+            'role' => 'supplier'
+        ]);
         Supplier::query()->create([
-            'user_id' => $kurir->id,
+            'user_id' => $kurirJnt->id,
+            'name' => 'kurir jnt'
+        ]);
+        Supplier::query()->create([
+            'user_id' => $kurirJne->id,
             'name' => 'kurir jne'
         ]);
         $product = new ProductSeeder();
